@@ -25,8 +25,10 @@ def _build_params(limit, category_code):
         return {"page": 1, "per": limit, "period": "001",
                 "dsplDvsnCode": "001", "dsplTrgtDvsnCode": "004",
                 "saleCmdtClstCode": category_code}
+    # 전체 = 국내도서 전체(종이책). eBook 등이 섞이지 않도록 국내도서 탭 기준 사용
     return {"page": 1, "per": limit, "period": "001",
-            "dsplDvsnCode": "000", "dsplTrgtDvsnCode": "001"}
+            "dsplDvsnCode": "001", "dsplTrgtDvsnCode": "002",
+            "saleCmdtDsplDvsnCode": "TOT"}
 
 
 def _parse(payload, limit):

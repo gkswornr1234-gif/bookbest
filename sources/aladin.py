@@ -10,7 +10,7 @@ import json
 import requests
 
 STORE_ID = "aladin"
-API_URL = "http://www.aladin.co.kr/ttb/api/ItemList.aspx"
+API_URL = "https://www.aladin.co.kr/ttb/api/ItemList.aspx"
 
 
 def fetch(max_results: int = 50, category_id: int = 0):
@@ -29,8 +29,20 @@ def fetch(max_results: int = 50, category_id: int = 0):
     }
     if category_id:                  # 0 = 전체
         params["CategoryId"] = category_id
-    r = requests.get(API_URL, params=params, timeout=20)
-    r.raise_for_status()
+
+    # 일시적 네트워크 흔들림 대비: 짧게 두 번까지 재시도
+    last_err = None
+    for attempt in range(2):
+        try:
+            r = requests.get(API_URL, params=params, timeout=15)
+            r.raise_for_status()
+            break
+        except Exception as e:
+            last_err = e
+            if attempt == 0:
+                import time; time.sleep(2)
+            else:
+                raise last_err
 
     # 알라딘 JSON 끝에 불필요한 세미콜론/개행이 붙는 경우가 있어 방어적으로 파싱
     text = r.text.strip().rstrip(";")

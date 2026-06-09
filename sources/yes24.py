@@ -21,9 +21,9 @@ BASE = "https://www.yes24.com/product/category/daybestseller"
 _PAGE = None
 
 
-def list_url(category_number="001"):
+def list_url(category_number="001", size=24):
     return (f"{BASE}?categoryNumber={category_number}"
-            "&pageNumber=1&pageSize=24&type=day")
+            f"&pageNumber=1&pageSize={size}&type=day")
 
 
 def _get_page():
@@ -41,7 +41,7 @@ def close():
 
 def fetch(limit: int = 24, category_number: str = "001"):
     page = _get_page()
-    page.goto(list_url(category_number), wait_until="domcontentloaded", timeout=40000)
+    page.goto(list_url(category_number, size=limit), wait_until="domcontentloaded", timeout=40000)
     try:
         page.wait_for_selector("li[data-goods-no]", state="attached", timeout=20000)
     except Exception:
