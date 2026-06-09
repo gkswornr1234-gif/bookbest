@@ -1,0 +1,35 @@
+name: collect-bestsellers
+
+on:
+  schedule:
+    - cron: "30 21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+      - run: python -m playwright install --with-deps chromium
+
+      - name: Collect
+        env:
+          ALADIN_TTB_KEY: ${{ secrets.ALADIN_TTB_KEY }}
+        run: python collect.py
+
+      - name: Commit results
+        run: |
+          git config user.name  "bestseller-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A
+          git commit -m "data: $(date -u +%F)" || echo "no changes"
+          git push
