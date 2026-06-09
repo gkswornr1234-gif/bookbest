@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>일간 베스트셀러 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Kyobo Design System tokens */
+    --blue:#5055B1;      /* UI 기본 · 강조 (Informative/Accent) */
+    --green:#4DAC27;     /* 긍정 · 성공 (Positive) → 상승/급등 */
+    --red:#EC1F2D;       /* 부정 (Negative) → 하락 */
+    --green-bg:rgba(77,172,39,.08);
+    --ink:#1A1A1A;
+    --ink-2:#666666;
+    --ink-3:#999999;
+    --line:#EBEBEB;
+    --line-2:#F0F0F0;
+    --bg:#FFFFFF;
+    --bg-soft:#F7F8FA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  body{
+    font-family:'Noto Sans KR',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    letter-spacing:-0.01em;
+    line-height:1.5;
+    padding:0 0 80px;
+  }
+  /* 숫자/영문은 Roboto 우선 (KDS) */
+  .num{font-family:'Roboto','Noto Sans KR',sans-serif;font-feature-settings:"tnum"}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* ---------- Header ---------- */
+  header{padding:40px 0 0}
+  .crumb{font-size:13px;color:var(--ink-3);font-weight:500;margin-bottom:14px}
+  .crumb b{color:var(--ink-2);font-weight:500}
+  .title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-bottom:22px;border-bottom:2px solid var(--ink)}
+  h1{font-size:32px;line-height:44px;font-weight:700;letter-spacing:-0.02em}
+  h1 .accent{color:var(--blue)}
+  .dateline{text-align:right;flex-shrink:0}
+  .dateline .today{font-family:'Roboto',sans-serif;font-weight:700;font-size:22px;letter-spacing:0}
+  .dateline .vs{font-size:13px;color:var(--ink-2);margin-top:3px}
+  .sample-tag{display:inline-block;margin-top:9px;font-size:11px;font-weight:500;color:var(--ink-3);background:var(--bg-soft);border:1px solid var(--line);padding:3px 9px;border-radius:4px}
+
+  /* ---------- Controls ---------- */
+  .controls{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:22px 0 6px}
+  .tabs{display:flex;gap:4px}
+  .tabs button{font-family:inherit;font-size:15px;font-weight:500;letter-spacing:-0.01em;border:none;background:none;color:var(--ink-2);padding:9px 4px;margin-right:18px;cursor:pointer;position:relative;transition:.15s}
+  .tabs button.active{color:var(--blue);font-weight:700}
+  .tabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--blue)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);align-items:center}
+  .legend span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .chip{font-family:'Roboto',sans-serif;font-weight:700;font-size:11px;padding:1px 6px;border-radius:3px;letter-spacing:0;line-height:1.5}
+  .chip.surge{background:var(--green);color:#fff}
+  .chip.new{background:var(--blue);color:#fff}
+
+  /* ---------- Category bar ---------- */
+  .cat-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;padding-bottom:2px}
+  .cat-bar button{font-family:inherit;font-size:13.5px;font-weight:500;letter-spacing:-0.01em;
+    border:1px solid var(--line);background:var(--bg);color:var(--ink-2);
+    padding:7px 15px;border-radius:99px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .cat-bar button:hover{border-color:var(--ink-3);color:var(--ink)}
+  .cat-bar button.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+  .cat-empty{padding:48px 16px;text-align:center;color:var(--ink-3);font-size:14px;
+    border:1px dashed var(--line);border-radius:8px}
+  @media(max-width:860px){
+    .cat-bar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      margin-left:-24px;margin-right:-24px;padding:0 24px 6px}
+    .cat-bar button{flex:0 0 auto}
+  }
+
+  /* ---------- Store columns ---------- */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+  .col{background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;opacity:0;transform:translateY(10px);animation:rise .5s ease forwards}
+  .col:nth-child(1){animation-delay:.04s}
+  .col:nth-child(2){animation-delay:.1s}
+  .col:nth-child(3){animation-delay:.16s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .col-head{padding:18px 20px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+  .col-head .name{font-size:18px;font-weight:700;letter-spacing:-0.02em}
+  .col-head .cnt{font-family:'Roboto',sans-serif;font-size:12px;font-weight:500;color:var(--ink-3)}
+
+  ul{list-style:none}
+  .row{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--line-2);position:relative}
+  .row:last-child{border-bottom:none}
+  .row.surge{background:var(--green-bg);box-shadow:inset 3px 0 0 var(--green)}
+  .rank{font-family:'Roboto',sans-serif;font-weight:700;font-size:20px;width:26px;text-align:center;flex-shrink:0;color:var(--ink-2);letter-spacing:0}
+  .row:nth-child(-n+3) .rank{color:var(--blue);font-weight:900}
+  .info{flex:1;min-width:0}
+  .bk-title{font-size:15px;font-weight:500;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bk-meta{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;display:flex;align-items:center;gap:6px}
+  .move{flex-shrink:0;text-align:right;min-width:50px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .arrow{font-family:'Roboto',sans-serif;font-weight:700;font-size:13px;letter-spacing:0;display:inline-flex;align-items:center;gap:1px}
+  .arrow.up{color:var(--green)} .arrow.down{color:var(--red)} .arrow.same{color:var(--ink-3);font-weight:500}
+  .cross{font-size:10px;font-weight:500;color:var(--blue);background:rgba(80,85,177,.08);border-radius:3px;padding:1px 5px;flex-shrink:0}
+
+  /* ---------- Merged view ---------- */
+  #merged{display:none;margin-top:18px}
+  .mtable{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;border-collapse:collapse}
+  .mtable thead th{font-size:12px;font-weight:500;color:var(--ink-2);text-align:center;padding:15px 8px;border-bottom:2px solid var(--ink);background:var(--bg-soft)}
+  .mtable thead th.l{text-align:left;padding-left:20px}
+  .mtable tbody td{padding:14px 8px;border-bottom:1px solid var(--line-2);text-align:center;vertical-align:middle}
+  .mtable tbody tr:last-child td{border-bottom:none}
+  .mtable tbody tr.surge{background:var(--green-bg)}
+  .mtable tbody tr.surge td:first-child{box-shadow:inset 3px 0 0 var(--green)}
+  .m-overall{font-family:'Roboto',sans-serif;font-weight:900;font-size:18px;color:var(--blue);letter-spacing:0;width:54px}
+  .m-book{text-align:left;padding-left:20px}
+  .m-book .bk-title{white-space:normal;font-weight:500}
+  .m-book .bk-meta{margin-top:3px}
+  .m-cell{display:inline-flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15}
+  .m-cell .nrank{font-family:'Roboto',sans-serif;font-weight:700;font-size:15px;color:var(--ink);letter-spacing:0}
+  .m-cell .sm{font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;letter-spacing:0}
+  .m-cell.up .sm{color:var(--green)} .m-cell.down .sm{color:var(--red)} .m-cell.same .sm{color:var(--ink-3)}
+  .m-na{color:#CFCFCF;font-size:14px}
+  .badges{display:inline-flex;gap:4px;justify-content:center}
+
+  footer{margin-top:34px;font-size:12.5px;color:var(--ink-2);line-height:1.8;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+  footer b{color:var(--ink);font-weight:700}
+
+  @media(max-width:860px){
+    .grid{grid-template-columns:1fr}
+    .mtable thead th.opt,.mtable td.opt{display:none}
+    .dateline{text-align:left}
+    h1{font-size:26px;line-height:36px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="crumb">베스트 <b>›</b> 온라인 일간 베스트 <b>›</b> 3사 비교</div>
+    <div class="title-row">
+      <h1>일간 베스트셀러 <span class="accent">한눈에</span> 비교</h1>
+      <div class="dateline">
+        <div class="today num" id="today-el">2026.06.08</div>
+        <div class="vs" id="vs-el">전날(06.07) 대비 순위 변동</div>
+        <div class="sample-tag" id="sample-tag">SAMPLE · 화면 시안용 가짜 데이터</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="tabs">
+      <button id="btn-store" class="active" onclick="setView('store')">서점별 보기</button>
+      <button id="btn-merged" onclick="setView('merged')">통합 비교</button>
+    </div>
+    <div class="legend">
+      <span><span class="chip surge">급등</span> 4계단 이상 상승</span>
+      <span><span class="chip new">NEW</span> 신규 진입</span>
+      <span><span class="dot" style="background:var(--green)"></span> 상승</span>
+      <span><span class="dot" style="background:var(--red)"></span> 하락</span>
+    </div>
+  </div>
+
+  <div id="cat-bar" class="cat-bar"></div>
+
+  <div id="store" class="grid"></div>
+
+  <div id="merged">
+    <table class="mtable">
+      <thead>
+        <tr>
+          <th>통합</th>
+          <th class="l">도서</th>
+          <th>교보문고</th>
+          <th>예스24</th>
+          <th>알라딘</th>
+          <th class="opt">표시</th>
+        </tr>
+      </thead>
+      <tbody id="merged-body"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    화면에 보이는 순위·변동은 모두 <b>시안용 샘플</b>입니다. 실제 데이터가 연결되면 매일 자동 수집되어 채워집니다.
+    색상·폰트는 교보문고 디자인 시스템 토큰(블루 #5055B1 · 그린 #4DAC27 · Noto Sans KR / Roboto)을 따랐고,
+    상승/급등은 그린, 하락은 레드로 표시했습니다. 급등 기준(현재 4계단)과 통합 순위 계산식은 조정할 수 있습니다.
+  </footer>
+
+</div>
+
+<script>
+let SURGE_GAP = 4; // 급등 기준: N계단 이상 상승
+
+// 샘플 데이터: prev=null 이면 신규(NEW)  — data.json 이 없을 때 폴백으로 사용
+const SAMPLE_BOOKS = [
+  {isbn:"A01", title:"흐릿한 계절의 기록", author:"김서연", pub:"문학동네",
+    kyobo:{t:1,p:3}, yes:{t:2,p:2}, aladin:{t:1,p:4}},
+  {isbn:"A02", title:"데이터로 일하는 법", author:"박준호", pub:"한빛미디어",
+    kyobo:{t:2,p:1}, yes:{t:1,p:1}, aladin:{t:3,p:2}},
+  {isbn:"A03", title:"마음의 위도", author:"이하늘", pub:"창비",
+    kyobo:{t:3,p:null}, yes:{t:5,p:9}, aladin:{t:2,p:1}},
+  {isbn:"A04", title:"부의 재구성", author:"정민우", pub:"쌤앤파커스",
+    kyobo:{t:4,p:6}, yes:{t:3,p:4}, aladin:{t:8,p:5}},
+  {isbn:"A05", title:"조용한 혁명", author:"최은영", pub:"민음사",
+    kyobo:{t:5,p:5}, yes:null, aladin:{t:4,p:12}},
+  {isbn:"A06", title:"하루 10분 영어 습관", author:"다니엘 박", pub:"길벗",
+    kyobo:null, yes:{t:4,p:4}, aladin:{t:6,p:7}},
+  {isbn:"A07", title:"고요 속의 빛", author:"한지수", pub:"은행나무",
+    kyobo:{t:6,p:null}, yes:{t:8,p:11}, aladin:null},
+  {isbn:"A08", title:"코드 너머의 사고", author:"윤재민", pub:"인사이트",
+    kyobo:{t:7,p:4}, yes:null, aladin:{t:5,p:3}},
+  {isbn:"A09", title:"느린 산책", author:"서지우", pub:"김영사",
+    kyobo:null, yes:{t:6,p:14}, aladin:{t:7,p:6}},
+  {isbn:"A10", title:"경제의 민낯", author:"강태원", pub:"어크로스",
+    kyobo:{t:8,p:7}, yes:{t:7,p:5}, aladin:null},
+  {isbn:"A11", title:"별빛 도서관", author:"노을", pub:"비채",
+    kyobo:null, yes:{t:9,p:null}, aladin:{t:9,p:18}},
+  {isbn:"A12", title:"습관의 과학", author:"레나 킴", pub:"웅진지식하우스",
+    kyobo:{t:9,p:8}, yes:null, aladin:{t:10,p:10}},
+  {isbn:"A13", title:"내일의 날씨", author:"문해린", pub:"마음산책",
+    kyobo:{t:10,p:2}, yes:{t:10,p:6}, aladin:null},
+];
+
+// ── 카테고리 정의 (교보 기준 통합 분류) ──
+const CAT_DEFS = [
+  {id:"all",     label:"전체"},
+  {id:"novel",   label:"소설"},
+  {id:"essay",   label:"시/에세이"},
+  {id:"human",   label:"인문"},
+  {id:"social",  label:"정치/사회"},
+  {id:"history", label:"역사/문화"},
+  {id:"science", label:"과학"},
+  {id:"econ",    label:"경제/경영"},
+  {id:"self",    label:"자기계발"},
+  {id:"art",     label:"예술/대중문화"},
+];
+
+// ── 샘플 데이터셋: '전체'는 13권, 나머지 카테고리는 결정적으로 재구성 ──
+function seeded(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function buildSampleDataset(){
+  const data = { all: { books: SAMPLE_BOOKS } };
+  CAT_DEFS.filter(c=>c.id!=="all").forEach(c=>{
+    const picks = SAMPLE_BOOKS.filter(b => seeded(b.title+c.id)%10 < 7)
+      .map(b => ({isbn:b.isbn,title:b.title,author:b.author,pub:b.pub,kyobo:null,yes:null,aladin:null}));
+    ["kyobo","yes","aladin"].forEach(s=>{
+      const present = picks.filter(b => seeded(b.title+c.id+s)%3 !== 0);
+      present.sort((a,b)=> seeded(a.title+c.id+s+"o")%1000 - seeded(b.title+c.id+s+"o")%1000);
+      present.forEach((b,i)=>{
+        const t = i+1;
+        const pr = seeded(b.title+c.id+s+"p")%6;        // 0 → 신규(NEW)
+        b[s] = {t, p: pr===0 ? null : Math.max(1, t + (seeded(b.title+c.id+s+"d")%9 - 4))};
+      });
+    });
+    data[c.id] = { books: picks.filter(b => b.kyobo||b.yes||b.aladin) };
+  });
+  return data;
+}
+
+let CATEGORIES = CAT_DEFS;
+let DATASET = buildSampleDataset();   // data.json 로드 성공 시 교체됨
+let currentCat = "all";
+let books = DATASET.all.books;        // 현재 카테고리의 책 목록
+
+const STORES = [
+  {key:"kyobo", name:"교보문고"},
+  {key:"yes",   name:"예스24"},
+  {key:"aladin",name:"알라딘"},
+];
+
+function storeCount(b){return STORES.filter(s=>b[s.key]).length;}
+
+function movement(rank){
+  if(!rank) return null;
+  if(rank.p===null) return {type:"new", diff:null, surge:rank.t<=10};
+  const diff = rank.p - rank.t;          // +면 상승
+  const type = diff>0?"up":diff<0?"down":"same";
+  return {type, diff, surge:diff>=SURGE_GAP};
+}
+
+function moveLabel(m){
+  if(!m) return "";
+  if(m.type==="new") return `<span class="chip new">NEW</span>`;
+  if(m.type==="same") return `<span class="arrow same">–</span>`;
+  const ar = m.type==="up"?"▲":"▼";
+  return `<span class="arrow ${m.type}">${ar}${Math.abs(m.diff)}</span>`;
+}
+
+/* ----- 서점별 ----- */
+function renderStores(){
+  const grid = document.getElementById("store");
+  grid.innerHTML = "";
+  STORES.forEach(s=>{
+    const items = books.filter(b=>b[s.key]).sort((a,b)=>a[s.key].t-b[s.key].t);
+    let rows = "";
+    items.forEach(b=>{
+      const m = movement(b[s.key]);
+      const surge = m && m.surge;
+      const cross = storeCount(b)>=2 ? `<span class="cross">${storeCount(b)}사</span>` : "";
+      rows += `
+        <li class="row ${surge?'surge':''}">
+          <div class="rank num">${b[s.key].t}</div>
+          <div class="info">
+            <div class="bk-title">${b.title}</div>
+            <div class="bk-meta">${b.author} · ${b.pub} ${cross}</div>
+          </div>
+          <div class="move">
+            ${surge?'<span class="chip surge">급등</span>':''}
+            ${moveLabel(m)}
+          </div>
+        </li>`;
+    });
+    grid.insertAdjacentHTML("beforeend", `
+      <div class="col">
+        <div class="col-head">
+          <span class="name">${s.name}</span>
+          <span class="cnt num">TOP ${items.length}</span>
+        </div>
+        <ul>${rows}</ul>
+      </div>`);
+  });
+}
+
+/* ----- 통합 ----- */
+function avgRank(b){
+  const rs = STORES.map(s=>b[s.key]?b[s.key].t:null).filter(x=>x!==null);
+  return rs.reduce((a,c)=>a+c,0)/rs.length;
+}
+function mCell(rank){
+  if(!rank) return `<span class="m-na">–</span>`;
+  const m = movement(rank);
+  let sm;
+  if(m.type==="new") sm=`<span class="sm" style="color:var(--blue)">NEW</span>`;
+  else if(m.type==="same") sm=`<span class="sm">–</span>`;
+  else sm=`<span class="sm">${m.type==="up"?"▲":"▼"}${Math.abs(m.diff)}</span>`;
+  return `<span class="m-cell ${m.type}"><span class="nrank">${rank.t}</span>${sm}</span>`;
+}
+function renderMerged(){
+  const body = document.getElementById("merged-body");
+  body.innerHTML="";
+  const sorted = [...books].sort((a,b)=>avgRank(a)-avgRank(b));
+  sorted.forEach((b,i)=>{
+    const anySurge = STORES.some(s=>{const m=movement(b[s.key]); return m&&m.surge;});
+    const anyNew = STORES.some(s=>{const m=movement(b[s.key]); return m&&m.type==="new";});
+    const badges = `<span class="badges">
+        ${anySurge?'<span class="chip surge">급등</span>':''}
+        ${anyNew?'<span class="chip new">NEW</span>':''}</span>`;
+    body.insertAdjacentHTML("beforeend",`
+      <tr class="${anySurge?'surge':''}">
+        <td class="m-overall">${i+1}</td>
+        <td class="m-book"><div class="bk-title">${b.title}</div>
+            <div class="bk-meta">${b.author} · ${b.pub}</div></td>
+        <td>${mCell(b.kyobo)}</td>
+        <td>${mCell(b.yes)}</td>
+        <td>${mCell(b.aladin)}</td>
+        <td class="opt">${badges}</td>
+      </tr>`);
+  });
+}
+
+function setView(v){
+  currentView = v;
+  document.getElementById("btn-store").classList.toggle("active", v==="store");
+  document.getElementById("btn-merged").classList.toggle("active", v==="merged");
+  render();
+}
+
+let currentView = "store";
+
+function renderCategoryBar(){
+  const bar = document.getElementById("cat-bar");
+  bar.innerHTML = "";
+  CATEGORIES.forEach(c=>{
+    const has = DATASET[c.id] && DATASET[c.id].books && DATASET[c.id].books.length;
+    const b = document.createElement("button");
+    b.textContent = c.label;
+    b.className = (c.id===currentCat ? "active" : "");
+    if(!has && c.id!=="all"){ b.style.opacity=".4"; }   // 데이터 없는 카테고리는 흐리게
+    b.onclick = ()=>{ currentCat = c.id; renderCategoryBar(); render(); };
+    bar.appendChild(b);
+  });
+}
+
+function render(){
+  books = (DATASET[currentCat] && DATASET[currentCat].books) ? DATASET[currentCat].books : [];
+  const storeEl = document.getElementById("store");
+  const mergedEl = document.getElementById("merged");
+
+  if(!books.length){
+    const msg = `<div class="cat-empty">이 카테고리의 데이터가 아직 없습니다.</div>`;
+    storeEl.style.display = currentView==="store" ? "block" : "none";
+    mergedEl.style.display = currentView==="merged" ? "block" : "none";
+    storeEl.innerHTML = currentView==="store" ? msg : "";
+    if(currentView==="merged") mergedEl.querySelector("tbody").innerHTML =
+      `<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--ink-3)">이 카테고리의 데이터가 아직 없습니다.</td></tr>`;
+    return;
+  }
+  storeEl.style.display  = currentView==="store"  ? "grid" : "none";
+  mergedEl.style.display = currentView==="merged" ? "block" : "none";
+  renderStores();
+  renderMerged();
+}
+
+function fmtDate(d){ return d ? d.replaceAll("-", ".") : ""; }
+
+async function init(){
+  try{
+    const res = await fetch("./data.json", {cache:"no-store"});
+    if(res.ok){
+      const data = await res.json();
+      if(data.data && data.categories){
+        DATASET = data.data;
+        CATEGORIES = data.categories;
+        currentCat = CATEGORIES[0] ? CATEGORIES[0].id : "all";
+        if(typeof data.surge_gap === "number") SURGE_GAP = data.surge_gap;
+        document.getElementById("today-el").textContent = fmtDate(data.today);
+        document.getElementById("vs-el").textContent =
+          data.prev ? `전날(${fmtDate(data.prev)}) 대비 순위 변동` : "전날 데이터 없음 (첫 수집일)";
+        const tag = document.getElementById("sample-tag"); if(tag) tag.remove();
+      }
+    }
+  }catch(e){ /* data.json 없음(미리보기) → 샘플 표시 */ }
+  renderCategoryBar();
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
