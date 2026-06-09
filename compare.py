@@ -85,12 +85,31 @@ def build_category(today_lists, prev_lists):
                 meta[k] = it
 
     books = []
+    # today 아이템을 키로 빠르게 찾기 위한 맵 (prev_rank_site 조회용)
+    today_item = {}
+    for s in STORES:
+        for it in (today_lists.get(s) or []):
+            today_item[(s, keyer(it))] = it
+
     for k in {kk for s in STORES for kk in today_rm[s]}:
         m = meta.get(k, {})
         entry = {"isbn": m.get("isbn", ""), "title": m.get("title", ""),
                  "author": m.get("author", ""), "pub": m.get("publisher", "")}
         for s in STORES:
-            entry[s] = {"t": today_rm[s][k], "p": prev_rm[s].get(k)} if k in today_rm[s] else None
+            if k not in today_rm[s]:
+                entry[s] = None
+                continue
+            t = today_rm[s][k]
+            # 교보/예스: 서점이 직접 주는 전날 순위(prev_rank_site) 우선 사용.
+            #   prev_rank_site 가 0 또는 None 이면 어제 순위권 밖 → NEW(p=None).
+            # 알라딘: prev_rank_site 가 없으므로 우리 스냅샷 비교값 사용.
+            p = prev_rm[s].get(k)
+            if s in ("kyobo", "yes"):
+                it = today_item.get((s, k), {})
+                if "prev_rank_site" in it:
+                    prs = it.get("prev_rank_site")
+                    p = prs if (prs not in (0, None)) else None
+            entry[s] = {"t": t, "p": p}
         books.append(entry)
     return books
 
