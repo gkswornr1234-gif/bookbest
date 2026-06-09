@@ -38,17 +38,20 @@ def main():
         print(f"[{label}]")
         lists = {}
 
+        # 개수: 전체(all)=50, 분야별=30
+        N = 50 if c["id"] == "all" else 30
+
         # 알라딘 (CID 가 있을 때만; None = 알라딘 미지원 분야 → 건너뜀)
         if c.get("aladin") is not None:
-            lists["aladin"] = safe("알라딘", lambda: aladin.fetch(50, category_id=c["aladin"]))
+            lists["aladin"] = safe("알라딘", lambda: aladin.fetch(N, category_id=c["aladin"]))
 
         # 예스24 (categoryNumber 있을 때만 + 스위치 ON 일 때만)
         if ENABLE_YES24 and c.get("yes24"):
-            lists["yes"] = safe("예스24", lambda: yes24.fetch(24, category_number=c["yes24"]))
+            lists["yes"] = safe("예스24", lambda: yes24.fetch(N, category_number=c["yes24"]))
 
         # 교보 (kyobo 코드 있을 때만; 전체는 코드 없이 동작)
         if c["id"] == "all" or c.get("kyobo"):
-            lists["kyobo"] = safe("교보문고", lambda: kyobo.fetch(50, category_code=c.get("kyobo", "")))
+            lists["kyobo"] = safe("교보문고", lambda: kyobo.fetch(N, category_code=c.get("kyobo", "")))
 
         if any(lists.values()):
             today_by_cat[cid] = lists
