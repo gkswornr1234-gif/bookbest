@@ -108,9 +108,15 @@ def latest_prev_snapshot(today):
 
 
 # ---------- 전체 빌드 ----------
+def _kst_today():
+    # GitHub 서버는 UTC 라서, 한국 날짜(KST=UTC+9)로 맞춰야 어제/오늘이 제대로 구분됨
+    kst = datetime.timezone(datetime.timedelta(hours=9))
+    return datetime.datetime.now(kst).date().isoformat()
+
+
 def build_all(today_by_cat, today=None):
     """today_by_cat = { catId: { store: [items] } }"""
-    today = today or datetime.date.today().isoformat()
+    today = today or _kst_today()
 
     os.makedirs(SNAP_DIR, exist_ok=True)
     with open(os.path.join(SNAP_DIR, f"{today}.json"), "w", encoding="utf-8") as fp:
@@ -131,7 +137,8 @@ def build_all(today_by_cat, today=None):
             used_cats.append({"id": cid, "label": c["label"]})
 
     return {
-        "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
+        "generated_at": datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=9))).isoformat(timespec="seconds"),
         "today": today,
         "prev": prev_date,
         "surge_gap": SURGE_GAP,
