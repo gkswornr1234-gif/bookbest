@@ -230,7 +230,7 @@
         "rank": 26,
         "title": "2026 심우철 실전 동형 모의고사 Season 4",
         "author": "심우철 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169666145",
         "price": 13500,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=392440089&amp;partner=openAPI&amp;start=api"
@@ -1348,6 +1348,17 @@
       },
       {
         "rank": 32,
+        "prev_rank_site": 0,
+        "title": "저 재밌는 거 혼자 아는 사람 아닙니다",
+        "author": "쩜(신시연)",
+        "publisher": "오리지널스",
+        "isbn": "9791169087308",
+        "price": 16200,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000220106650"
+      },
+      {
+        "rank": 33,
         "prev_rank_site": 66,
         "title": "검은 숲을 지나 나를 만나다",
         "author": "천하이센",
@@ -1358,7 +1369,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220108217"
       },
       {
-        "rank": 33,
+        "rank": 34,
         "prev_rank_site": 34,
         "title": "어른의 행복은 조용하다(40만 부 기념 스페셜 리커버)",
         "author": "태수",
@@ -1369,7 +1380,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000214453032"
       },
       {
-        "rank": 34,
+        "rank": 35,
         "prev_rank_site": 22,
         "title": "위버멘쉬",
         "author": "프리드리히 니체",
@@ -1380,7 +1391,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000215877577"
       },
       {
-        "rank": 35,
+        "rank": 36,
         "prev_rank_site": 44,
         "title": "완벽한 원시인",
         "author": "자청",
@@ -1391,7 +1402,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219310977"
       },
       {
-        "rank": 36,
+        "rank": 37,
         "prev_rank_site": 45,
         "title": "자몽살구클럽",
         "author": "한로로",
@@ -1402,7 +1413,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000217089705"
       },
       {
-        "rank": 37,
+        "rank": 38,
         "prev_rank_site": 0,
         "title": "언더야드 레시피",
         "author": "서정경",
@@ -1413,7 +1424,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220178553"
       },
       {
-        "rank": 38,
+        "rank": 39,
         "prev_rank_site": 27,
         "title": "사춘기 엄마의 오장육부",
         "author": "나민애",
@@ -1424,7 +1435,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219714829"
       },
       {
-        "rank": 39,
+        "rank": 40,
         "prev_rank_site": 47,
         "title": "주식투자 무작정 따라하기(2026)",
         "author": "윤재수",
@@ -1435,7 +1446,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219079916"
       },
       {
-        "rank": 40,
+        "rank": 41,
         "prev_rank_site": 30,
         "title": "괴테는 모든 것을 말했다",
         "author": "스즈키 유이",
@@ -1446,7 +1457,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000218438100"
       },
       {
-        "rank": 41,
+        "rank": 42,
         "prev_rank_site": 48,
         "title": "체호프 단편선",
         "author": "안톤 체호프",
@@ -1457,7 +1468,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000000620207"
       },
       {
-        "rank": 42,
+        "rank": 43,
         "prev_rank_site": 26,
         "title": "다크 심리학 2",
         "author": "다크 사이드 프로젝트",
@@ -1468,7 +1479,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219545519"
       },
       {
-        "rank": 43,
+        "rank": 44,
         "prev_rank_site": 714,
         "title": "AI 제국: 권력, 자본, 노동",
         "author": "카렌 하오",
@@ -1479,7 +1490,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219211625"
       },
       {
-        "rank": 44,
+        "rank": 45,
         "prev_rank_site": 67,
         "title": "하마터면 나로 살지 못할 뻔했다",
         "author": "황양밍 외",
@@ -1490,7 +1501,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220047178"
       },
       {
-        "rank": 45,
+        "rank": 46,
         "prev_rank_site": 53,
         "title": "최소한의 세계사",
         "author": "이다지",
@@ -1501,7 +1512,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219930532"
       },
       {
-        "rank": 46,
+        "rank": 47,
         "prev_rank_site": 36,
         "title": "2026 큰별쌤 최태성의 별별한국사 한국사능력검정시험 심화(1,2,3급)(상)",
         "author": "최태성",
@@ -1512,7 +1523,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000218674965"
       },
       {
-        "rank": 47,
+        "rank": 48,
         "prev_rank_site": 38,
         "title": "인간 실격",
         "author": "다자이 오사무",
@@ -1523,7 +1534,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220097284"
       },
       {
-        "rank": 48,
+        "rank": 49,
         "prev_rank_site": 198,
         "title": "하버드 100년 전통 인생 수업",
         "author": "무천강",
@@ -1534,7 +1545,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000211014706"
       },
       {
-        "rank": 49,
+        "rank": 50,
         "prev_rank_site": 110,
         "title": "만일 그대가 나보다 먼저 간다면",
         "author": "허수경",
@@ -1543,17 +1554,6 @@
         "price": 11700,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000220152774"
-      },
-      {
-        "rank": 50,
-        "prev_rank_site": 49,
-        "title": "체력을 바꿔야 재력이 바뀐다",
-        "author": "정주영",
-        "publisher": "메가믹스스튜디오",
-        "isbn": "9791198393425",
-        "price": 18900,
-        "category": "자기계발",
-        "url": "https://product.kyobobook.co.kr/detail/S000219930247"
       }
     ]
   },
@@ -3135,7 +3135,18 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220041477"
       },
       {
-        "rank": 5,
+        "rank": 4,
+        "prev_rank_site": 39,
+        "title": "저 재밌는 거 혼자 아는 사람 아닙니다",
+        "author": "쩜(신시연)",
+        "publisher": "오리지널스",
+        "isbn": "9791169087308",
+        "price": 16200,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000220106650"
+      },
+      {
+        "rank": 6,
         "prev_rank_site": 2,
         "title": "어른의 행복은 조용하다(40만 부 기념 스페셜 리커버)",
         "author": "태수",
@@ -3144,17 +3155,6 @@
         "price": 16020,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000214453032"
-      },
-      {
-        "rank": 6,
-        "prev_rank_site": 1,
-        "title": "사춘기 엄마의 오장육부",
-        "author": "나민애",
-        "publisher": "서교책방",
-        "isbn": "9791124497029",
-        "price": 16020,
-        "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000219714829"
       },
       {
         "rank": 7,
@@ -3168,15 +3168,15 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220152774"
       },
       {
-        "rank": 8,
-        "prev_rank_site": 6,
-        "title": "백지 앞에서",
-        "author": "최은영",
-        "publisher": "문학동네",
-        "isbn": "9791141603373",
-        "price": 15750,
+        "rank": 7,
+        "prev_rank_site": 1,
+        "title": "사춘기 엄마의 오장육부",
+        "author": "나민애",
+        "publisher": "서교책방",
+        "isbn": "9791124497029",
+        "price": 16020,
         "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000219790831"
+        "url": "https://product.kyobobook.co.kr/detail/S000219714829"
       },
       {
         "rank": 9,
@@ -3190,15 +3190,15 @@
         "url": "https://product.kyobobook.co.kr/detail/S000203197818"
       },
       {
-        "rank": 10,
-        "prev_rank_site": 5,
-        "title": "행복할 거야 이래도 되나 싶을 정도로(10만 부 기념 교보문고 단독 리커버)",
-        "author": "일홍",
-        "publisher": "부크럼",
-        "isbn": "9791162145043",
-        "price": 16200,
+        "rank": 9,
+        "prev_rank_site": 6,
+        "title": "백지 앞에서",
+        "author": "최은영",
+        "publisher": "문학동네",
+        "isbn": "9791141603373",
+        "price": 15750,
         "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000213913377"
+        "url": "https://product.kyobobook.co.kr/detail/S000219790831"
       },
       {
         "rank": 11,
@@ -3212,7 +3212,18 @@
         "url": "https://product.kyobobook.co.kr/detail/S000001752581"
       },
       {
-        "rank": 12,
+        "rank": 11,
+        "prev_rank_site": 5,
+        "title": "행복할 거야 이래도 되나 싶을 정도로(10만 부 기념 교보문고 단독 리커버)",
+        "author": "일홍",
+        "publisher": "부크럼",
+        "isbn": "9791162145043",
+        "price": 16200,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000213913377"
+      },
+      {
+        "rank": 13,
         "prev_rank_site": 7,
         "title": "꾸준함을 기르는 일",
         "author": "수풀림",
@@ -3221,17 +3232,6 @@
         "price": 16200,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000219796204"
-      },
-      {
-        "rank": 13,
-        "prev_rank_site": 25,
-        "title": "모든 날들이 행복했으면 좋겠어",
-        "author": "갱여운",
-        "publisher": "하이스트",
-        "isbn": "9791193282649",
-        "price": 16920,
-        "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000219442630"
       },
       {
         "rank": 14,
@@ -3245,6 +3245,17 @@
         "url": "https://product.kyobobook.co.kr/detail/S000218907630"
       },
       {
+        "rank": 14,
+        "prev_rank_site": 25,
+        "title": "모든 날들이 행복했으면 좋겠어",
+        "author": "갱여운",
+        "publisher": "하이스트",
+        "isbn": "9791193282649",
+        "price": 16920,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000219442630"
+      },
+      {
         "rank": 15,
         "prev_rank_site": 16,
         "title": "산곡미풍",
@@ -3256,7 +3267,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220003714"
       },
       {
-        "rank": 16,
+        "rank": 17,
         "prev_rank_site": 8,
         "title": "다정한 사람이 이긴다(스페셜 양장 리커버판)",
         "author": "이해인",
@@ -3265,17 +3276,6 @@
         "price": 17100,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000219654405"
-      },
-      {
-        "rank": 17,
-        "prev_rank_site": 17,
-        "title": "당신은 결국 무엇이든 해내는 사람(특별 리커버 에디션)",
-        "author": "김상현",
-        "publisher": "필름(Feelm)",
-        "isbn": "9791188469994",
-        "price": 15300,
-        "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000001914848"
       },
       {
         "rank": 18,
@@ -3289,7 +3289,18 @@
         "url": "https://product.kyobobook.co.kr/detail/S000001068777"
       },
       {
-        "rank": 19,
+        "rank": 18,
+        "prev_rank_site": 17,
+        "title": "당신은 결국 무엇이든 해내는 사람(특별 리커버 에디션)",
+        "author": "김상현",
+        "publisher": "필름(Feelm)",
+        "isbn": "9791188469994",
+        "price": 15300,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000001914848"
+      },
+      {
+        "rank": 20,
         "prev_rank_site": 0,
         "title": "그냥 웃었는데 인생이 달라졌습니다",
         "author": "강문순",
@@ -3300,7 +3311,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220167464"
       },
       {
-        "rank": 20,
+        "rank": 21,
         "prev_rank_site": 22,
         "title": "너를 아끼며 살아라",
         "author": "나태주",
@@ -3309,17 +3320,6 @@
         "price": 16650,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000216730154"
-      },
-      {
-        "rank": 21,
-        "prev_rank_site": 14,
-        "title": "잘했고 잘하고 있고 잘될 것이다(50만부 기념)",
-        "author": "정영욱",
-        "publisher": "부크럼",
-        "isbn": "9791162143605",
-        "price": 16200,
-        "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000001807614"
       },
       {
         "rank": 22,
@@ -3333,7 +3333,18 @@
         "url": "https://product.kyobobook.co.kr/detail/S000219931130"
       },
       {
-        "rank": 23,
+        "rank": 22,
+        "prev_rank_site": 14,
+        "title": "잘했고 잘하고 있고 잘될 것이다(50만부 기념)",
+        "author": "정영욱",
+        "publisher": "부크럼",
+        "isbn": "9791162143605",
+        "price": 16200,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000001807614"
+      },
+      {
+        "rank": 24,
         "prev_rank_site": 23,
         "title": "제철 행복",
         "author": "김신지",
@@ -3344,7 +3355,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000213077352"
       },
       {
-        "rank": 24,
+        "rank": 25,
         "prev_rank_site": 0,
         "title": "내 가방에 내가 없다",
         "author": "권지연 외",
@@ -3355,7 +3366,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220210125"
       },
       {
-        "rank": 25,
+        "rank": 26,
         "prev_rank_site": 13,
         "title": "어른의 품위(10만 부 기념 교보문고 단독 스페셜 리커버)",
         "author": "최서영",
@@ -3366,7 +3377,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000217602005"
       },
       {
-        "rank": 26,
+        "rank": 27,
         "prev_rank_site": 29,
         "title": "행복",
         "author": "법륜",
@@ -3375,17 +3386,6 @@
         "price": 18000,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000219973683"
-      },
-      {
-        "rank": 27,
-        "prev_rank_site": 32,
-        "title": "도스토옙스키 번역 일기",
-        "author": "김정아",
-        "publisher": "샘터(샘터사)",
-        "isbn": "9788946423305",
-        "price": 25200,
-        "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000219854361"
       },
       {
         "rank": 28,
@@ -3399,7 +3399,18 @@
         "url": "https://product.kyobobook.co.kr/detail/S000214962079"
       },
       {
-        "rank": 29,
+        "rank": 28,
+        "prev_rank_site": 32,
+        "title": "도스토옙스키 번역 일기",
+        "author": "김정아",
+        "publisher": "샘터(샘터사)",
+        "isbn": "9788946423305",
+        "price": 25200,
+        "category": "시/에세이",
+        "url": "https://product.kyobobook.co.kr/detail/S000219854361"
+      },
+      {
+        "rank": 30,
         "prev_rank_site": 36,
         "title": "수빈의 두산 두산의 수빈",
         "author": "정수빈 외",
@@ -3410,7 +3421,7 @@
         "url": "https://product.kyobobook.co.kr/detail/S000220048913"
       },
       {
-        "rank": 30,
+        "rank": 31,
         "prev_rank_site": 26,
         "title": "사랑이 있으니 살아집디다",
         "author": "유시민 외",
@@ -3419,17 +3430,6 @@
         "price": 16200,
         "category": "시/에세이",
         "url": "https://product.kyobobook.co.kr/detail/S000219508068"
-      },
-      {
-        "rank": 31,
-        "prev_rank_site": 38,
-        "title": "단 한 번의 삶",
-        "author": "김영하",
-        "publisher": "복복서가",
-        "isbn": "9791191114768",
-        "price": 15120,
-        "category": "시/에세이",
-        "url": "https://product.kyobobook.co.kr/detail/S000216122857"
       }
     ]
   },
@@ -5116,7 +5116,7 @@
         "author": "서정숙",
         "publisher": "어가",
         "isbn": "9791170752486",
-        "price": 15300,
+        "price": 17000,
         "category": "가정/육아",
         "url": "https://product.kyobobook.co.kr/detail/S000220176769"
       },
@@ -16029,7 +16029,7 @@
         "rank": 1,
         "title": "2026 심우철 실전 동형 모의고사 Season 4",
         "author": "심우철 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169666145",
         "price": 13500,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=392440089&amp;partner=openAPI&amp;start=api"
@@ -16083,7 +16083,7 @@
         "rank": 7,
         "title": "2026 국가직 경향을 반영한 진짜 공무원 모의고사 시즌 3 - 지방직 9급 시험 대비",
         "author": "유대종 국어 연구소 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169666220",
         "price": 8100,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=392938391&amp;partner=openAPI&amp;start=api"
@@ -16137,7 +16137,7 @@
         "rank": 13,
         "title": "2027 심슨 보카 - 심우철 공무원 영어 기본서 시리즈",
         "author": "심우철 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169666152",
         "price": 23400,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=393820826&amp;partner=openAPI&amp;start=api"
@@ -16155,7 +16155,7 @@
         "rank": 15,
         "title": "2026 써니 행정법총론 실전동형 모의고사",
         "author": "박준철 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169665162",
         "price": 14400,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=384594533&amp;partner=openAPI&amp;start=api"
@@ -16173,7 +16173,7 @@
         "rank": 17,
         "title": "2026 심우철 실전 동형 모의고사 Season 3",
         "author": "심우철 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169666039",
         "price": 13500,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=389482407&amp;partner=openAPI&amp;start=api"
@@ -16218,7 +16218,7 @@
         "rank": 22,
         "title": "2026 문동균 한국사 문단속 적중 최종병기 FINAL 모의고사",
         "author": "문동균 (지은이)",
-        "publisher": "에스티유니타스",
+        "publisher": "공단기(에스티유니타스)",
         "isbn": "9791169665384",
         "price": 14400,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=383870579&amp;partner=openAPI&amp;start=api"
@@ -17935,7 +17935,7 @@
         "title": "생명의 삶 2026.6 (개역개정판)",
         "author": "생명의삶 편집부 (지은이)",
         "publisher": "두란노(잡지)",
-        "isbn": "9771975740017",
+        "isbn": "K612138603",
         "price": 5700,
         "url": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=392935387&amp;partner=openAPI&amp;start=api"
       },
@@ -18233,17 +18233,6 @@
       {
         "rank": 6,
         "prev_rank_site": null,
-        "title": "생명의 삶 개역개정판 (월간) : 6월 [2026]",
-        "author": "두란노편집부",
-        "publisher": "두란노",
-        "isbn": "",
-        "price": 5700,
-        "category": "",
-        "url": "https://www.yes24.com/product/goods/189375233"
-      },
-      {
-        "rank": 7,
-        "prev_rank_site": null,
         "title": "개역개정 작은 매일성경 (격월간) : 7,8월호 [2026]",
         "author": "성서유니온 편집부",
         "publisher": "성서유니온",
@@ -18253,7 +18242,7 @@
         "url": "https://www.yes24.com/product/goods/191000538"
       },
       {
-        "rank": 8,
+        "rank": 7,
         "prev_rank_site": null,
         "title": "과학소년 (월간) : 6월 [2026]",
         "author": "편집부",
@@ -18264,7 +18253,7 @@
         "url": "https://www.yes24.com/product/goods/189589616"
       },
       {
-        "rank": 9,
+        "rank": 8,
         "prev_rank_site": null,
         "title": "고학년 어린이 매일성경 (격월간) : 7,8월호 [2026]",
         "author": "성서유니온 편집부",
@@ -18275,7 +18264,7 @@
         "url": "https://www.yes24.com/product/goods/190998297"
       },
       {
-        "rank": 10,
+        "rank": 9,
         "prev_rank_site": null,
         "title": "EBS 라디오 귀가 트이는 영어 (월간) : 6월 [2026]",
         "author": "이현석",
@@ -18286,7 +18275,7 @@
         "url": "https://www.yes24.com/product/goods/189520008"
       },
       {
-        "rank": 11,
+        "rank": 10,
         "prev_rank_site": null,
         "title": "청소년 매일성경 (격월간) : 7,8월호 [2026]",
         "author": "성서유니온 편집부",
@@ -18297,7 +18286,7 @@
         "url": "https://www.yes24.com/product/goods/190999396"
       },
       {
-        "rank": 12,
+        "rank": 11,
         "prev_rank_site": null,
         "title": "뉴턴 Newton (월간) : 6월 [2026]",
         "author": "(주)아이뉴턴 편집부",
@@ -18308,7 +18297,7 @@
         "url": "https://www.yes24.com/product/goods/189856337"
       },
       {
-        "rank": 13,
+        "rank": 12,
         "prev_rank_site": null,
         "title": "어린이과학동아 (격주간) : 11호 (6/1) [2026]",
         "author": "동아사이언스 어린이과학동아편집부",
@@ -18319,7 +18308,7 @@
         "url": "https://www.yes24.com/product/goods/189806344"
       },
       {
-        "rank": 14,
+        "rank": 13,
         "prev_rank_site": null,
         "title": "맥심 MAXIM B형 (월간) : 6월 [2026]",
         "author": "MAXIM 편집부",
@@ -18330,7 +18319,7 @@
         "url": "https://www.yes24.com/product/goods/189764229"
       },
       {
-        "rank": 15,
+        "rank": 14,
         "prev_rank_site": null,
         "title": "주부생활 A형 (여성월간) : 6월 [2026]",
         "author": "주부생활 편집부",
@@ -18341,7 +18330,7 @@
         "url": "https://www.yes24.com/product/goods/189656454"
       },
       {
-        "rank": 16,
+        "rank": 15,
         "prev_rank_site": null,
         "title": "EBS 라디오 EASY WRITING 이지 라이팅 (월간) : 6월 [2026]",
         "author": "마스터유진",
@@ -18352,7 +18341,7 @@
         "url": "https://www.yes24.com/product/goods/189520006"
       },
       {
-        "rank": 17,
+        "rank": 16,
         "prev_rank_site": null,
         "title": "EBS 라디오 Start English (월간) : 6월 [2026]",
         "author": "케일린 신, 잭 바든 공",
@@ -18363,7 +18352,7 @@
         "url": "https://www.yes24.com/product/goods/189520005"
       },
       {
-        "rank": 18,
+        "rank": 17,
         "prev_rank_site": null,
         "title": "EBS 라디오 초급 일본어 (월간) : 6월 [2026]",
         "author": "이은미",
@@ -18374,7 +18363,7 @@
         "url": "https://www.yes24.com/product/goods/189520003"
       },
       {
-        "rank": 19,
+        "rank": 18,
         "prev_rank_site": null,
         "title": "뉴필로소퍼 NewPhilosopher (계간) : Vol.34 [2026]",
         "author": "편집부",
@@ -18385,7 +18374,7 @@
         "url": "https://www.yes24.com/product/goods/184393972"
       },
       {
-        "rank": 20,
+        "rank": 19,
         "prev_rank_site": null,
         "title": "어린이수학동아 (격주간) : 12호 (6/15) [2026]",
         "author": "동아사이언스수학동아편집부",
@@ -18396,7 +18385,7 @@
         "url": "https://www.yes24.com/product/goods/191301315"
       },
       {
-        "rank": 21,
+        "rank": 20,
         "prev_rank_site": null,
         "title": "매일성경 순 (격월간) : 7,8월호 [2026]",
         "author": "성서유니온 편집부",
@@ -18407,7 +18396,7 @@
         "url": "https://www.yes24.com/product/goods/190999867"
       },
       {
-        "rank": 22,
+        "rank": 21,
         "prev_rank_site": null,
         "title": "물가자료 (월간) : 6월 [2026]",
         "author": "한국물가협회편집부",
@@ -18418,7 +18407,7 @@
         "url": "https://www.yes24.com/product/goods/189856333"
       },
       {
-        "rank": 23,
+        "rank": 22,
         "prev_rank_site": null,
         "title": "위즈키즈 (월간) : 6월 [2026]",
         "author": "편집부",
@@ -18429,7 +18418,7 @@
         "url": "https://www.yes24.com/product/goods/189589617"
       },
       {
-        "rank": 24,
+        "rank": 23,
         "prev_rank_site": null,
         "title": "EBS 라디오 EASY ENGLISH 초급영어회화 (월간) : 6월 [2026]",
         "author": "이보영, 남주철 공",
@@ -18440,7 +18429,7 @@
         "url": "https://www.yes24.com/product/goods/189520011"
       },
       {
-        "rank": 25,
+        "rank": 24,
         "prev_rank_site": null,
         "title": "매경 Economy 이코노미 (주간) : 2363호 [2026]",
         "author": "매일경제신문사 편집부",
@@ -18451,7 +18440,7 @@
         "url": "https://www.yes24.com/product/goods/191481345"
       },
       {
-        "rank": 26,
+        "rank": 25,
         "prev_rank_site": null,
         "title": "한경비즈니스 (주간) : 1593호 [2026]",
         "author": "한경비즈니스 편집국",
@@ -18462,7 +18451,7 @@
         "url": "https://www.yes24.com/product/goods/191481342"
       },
       {
-        "rank": 27,
+        "rank": 26,
         "prev_rank_site": null,
         "title": "큐티인 (작은글씨) (월간) : 7월 [2026]",
         "author": "편집부",
@@ -18473,7 +18462,7 @@
         "url": "https://www.yes24.com/product/goods/191321867"
       },
       {
-        "rank": 28,
+        "rank": 27,
         "prev_rank_site": null,
         "title": "SKEPTIC Korea 한국 스켑틱 (계간) : 46호",
         "author": "스켑틱 협회 편",
@@ -18484,7 +18473,7 @@
         "url": "https://www.yes24.com/product/goods/191192608"
       },
       {
-        "rank": 29,
+        "rank": 28,
         "prev_rank_site": null,
         "title": "매일성경 묵상과 설교 (격월간) : 7,8월호 [2026]",
         "author": "성서유니온 편집부",
@@ -18495,7 +18484,7 @@
         "url": "https://www.yes24.com/product/goods/191004261"
       },
       {
-        "rank": 30,
+        "rank": 29,
         "prev_rank_site": null,
         "title": "앳스타일 A형 (월간) : 7월 ASEA2026 스페셜 에디션 [2026]",
         "author": "편집부 편",
@@ -18504,6 +18493,17 @@
         "price": 13770,
         "category": "",
         "url": "https://www.yes24.com/product/goods/190848415"
+      },
+      {
+        "rank": 30,
+        "prev_rank_site": null,
+        "title": "일본어저널 (월간) : 6월 [2026]",
+        "author": "다락원㈜ 편집부",
+        "publisher": "다락원",
+        "isbn": "",
+        "price": 13770,
+        "category": "",
+        "url": "https://www.yes24.com/product/goods/190392139"
       }
     ],
     "kyobo": [
@@ -18522,7 +18522,7 @@
         "rank": 2,
         "prev_rank_site": 3,
         "title": "매일성경 개역개정(2026년7/8월호)",
-        "author": "편집부",
+        "author": "성서유니온 편집부",
         "publisher": "성서유니온",
         "isbn": "3904000613277",
         "price": 4750,
@@ -18533,7 +18533,7 @@
         "rank": 3,
         "prev_rank_site": 21,
         "title": "기도수첩 한글 (2026년 7월호)",
-        "author": "편집부",
+        "author": "생명 편집부",
         "publisher": "생명",
         "isbn": "3904000613390",
         "price": 4750,
@@ -18566,7 +18566,7 @@
         "rank": 6,
         "prev_rank_site": 23,
         "title": "청소년매일성경(2026년 7/8월호)",
-        "author": "편집부",
+        "author": "성서유니온 편집부",
         "publisher": "성서유니온",
         "isbn": "3904000613215",
         "price": 4270,
@@ -18588,7 +18588,7 @@
         "rank": 8,
         "prev_rank_site": 46,
         "title": "매일성경 순(2026년 7/8월호)",
-        "author": "편집부",
+        "author": "성서유니온 편집부",
         "publisher": "성서유니온",
         "isbn": "3904000613246",
         "price": 4750,
@@ -18599,7 +18599,7 @@
         "rank": 9,
         "prev_rank_site": 30,
         "title": "고학년 어린이 매일성경(2026년 7/8월호)",
-        "author": "편집부",
+        "author": "성서유니온 편집부",
         "publisher": "성서유니온",
         "isbn": "3904000612706",
         "price": 4270,
@@ -18643,7 +18643,7 @@
         "rank": 13,
         "prev_rank_site": 43,
         "title": "기도수첩 영어 (2026년 7월)",
-        "author": "편집부",
+        "author": "생명 편집부",
         "publisher": "생명",
         "isbn": "3904000613550",
         "price": 5700,
@@ -18654,7 +18654,7 @@
         "rank": 14,
         "prev_rank_site": 42,
         "title": "어린이 기도수첩 유아 유치부 (2026년 7월)",
-        "author": "편집부",
+        "author": "생명 편집부",
         "publisher": "생명",
         "isbn": "3904000613543",
         "price": 5700,
@@ -18665,7 +18665,7 @@
         "rank": 15,
         "prev_rank_site": 41,
         "title": "어린이 기도수첩 초등부 한글 (2026년 7월)",
-        "author": "편집부",
+        "author": "생명 편집부",
         "publisher": "생명",
         "isbn": "3904000613598",
         "price": 5700,
@@ -18676,7 +18676,7 @@
         "rank": 16,
         "prev_rank_site": 47,
         "title": "코믹챔프(2026년 12호)",
-        "author": "편집부",
+        "author": "대원씨아이 편집부",
         "publisher": "대원씨아이",
         "isbn": "3904000613017",
         "price": 2850,
@@ -18687,7 +18687,7 @@
         "rank": 17,
         "prev_rank_site": 48,
         "title": "시니어 매일성경 (2026년 7/8월호)",
-        "author": "편집부",
+        "author": "성서유니온 편집부",
         "publisher": "성서유니온",
         "isbn": "3904000612607",
         "price": 5220,
@@ -18698,7 +18698,7 @@
         "rank": 18,
         "prev_rank_site": 31,
         "title": "개역개정 작은 매일성경 (2026년 7/8월호)",
-        "author": "편집부",
+        "author": "성서유니온 편집부",
         "publisher": "성서유니온",
         "isbn": "3904000612584",
         "price": 4270,
@@ -18797,7 +18797,7 @@
         "rank": 27,
         "prev_rank_site": 0,
         "title": "좋은생각(2026년 7월호)",
-        "author": "편집부",
+        "author": "좋은생각사람들 편집부",
         "publisher": "좋은생각사람들",
         "isbn": "3904000613796",
         "price": 4750,
@@ -18819,7 +18819,7 @@
         "rank": 29,
         "prev_rank_site": 0,
         "title": "청소년 큐티인(2026년 7월호)",
-        "author": "편집부",
+        "author": "QTM 편집부",
         "publisher": "QTM",
         "isbn": "3904000613482",
         "price": 4750,
@@ -21725,7 +21725,7 @@
         "rank": 7,
         "prev_rank_site": null,
         "title": "멜로우 TV 아이돌 시사상식 데뷔 챌린지 ２",
-        "author": "멜로우 TV 원저/남지은 글/쓰리포 그림/표수현 감수",
+        "author": "멜로우 TV 원저/남지은 글/쓰리포, 해얌 그림/표수현 감수",
         "publisher": "학산키즈",
         "isbn": "",
         "price": 13500,
