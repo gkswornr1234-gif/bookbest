@@ -96,6 +96,7 @@
   .info{flex:1;min-width:0}
   .bk-title{font-size:15px;font-weight:500;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bk-meta{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;display:flex;align-items:center;gap:6px}
+  .bk-ship{font-size:11px;color:var(--ink-3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em}
   .move{flex-shrink:0;text-align:right;min-width:50px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
   .arrow{font-family:'Roboto',sans-serif;font-weight:700;font-size:13px;letter-spacing:0;display:inline-flex;align-items:center;gap:1px}
   .arrow.up{color:var(--green)} .arrow.down{color:var(--red)} .arrow.same{color:var(--ink-3);font-weight:500}
@@ -103,21 +104,25 @@
 
   /* ---------- Merged view ---------- */
   #merged{display:none;margin-top:18px}
-  .mtable{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;border-collapse:collapse}
+  .mtable{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;border-collapse:collapse;table-layout:fixed}
   .mtable thead th{font-size:12px;font-weight:500;color:var(--ink-2);text-align:center;padding:15px 8px;border-bottom:2px solid var(--ink);background:var(--bg-soft)}
   .mtable thead th.l{text-align:left;padding-left:20px}
+  .mtable thead th:nth-child(1){width:56px}
+  .mtable thead th:nth-child(3),.mtable thead th:nth-child(4),.mtable thead th:nth-child(5){width:108px}
+  .mtable thead th.opt{width:64px}
   .mtable tbody td{padding:14px 8px;border-bottom:1px solid var(--line-2);text-align:center;vertical-align:middle}
   .mtable tbody tr:last-child td{border-bottom:none}
   .mtable tbody tr.surge{background:var(--green-bg)}
   .mtable tbody tr.surge td:first-child{box-shadow:inset 3px 0 0 var(--green)}
   .m-overall{font-family:'Roboto',sans-serif;font-weight:900;font-size:18px;color:var(--blue);letter-spacing:0;width:54px}
-  .m-book{text-align:left;padding-left:20px}
-  .m-book .bk-title{white-space:normal;font-weight:500}
-  .m-book .bk-meta{margin-top:3px}
+  .m-book{text-align:center;padding:14px 12px}
+  .m-book .bk-title{white-space:normal;font-weight:500;text-align:center;display:block;line-height:1.35}
+  .m-book .bk-meta{margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;display:block}
   .m-cell{display:inline-flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15}
   .m-cell .nrank{font-family:'Roboto',sans-serif;font-weight:700;font-size:15px;color:var(--ink);letter-spacing:0}
   .m-cell .sm{font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;letter-spacing:0}
   .m-cell.up .sm{color:var(--green)} .m-cell.down .sm{color:var(--red)} .m-cell.same .sm{color:var(--ink-3)}
+  .m-ship{font-size:10.5px;color:var(--ink-3);margin-top:3px;line-height:1.25;white-space:nowrap;letter-spacing:-0.02em}
   .m-na{color:#CFCFCF;font-size:14px}
   .badges{display:inline-flex;gap:4px;justify-content:center}
 
@@ -169,22 +174,16 @@
       <thead>
         <tr>
           <th>통합</th>
-          <th class="l">도서</th>
+          <th>도서</th>
           <th>교보문고</th>
           <th>예스24</th>
           <th>알라딘</th>
-          <th class="opt">표시</th>
         </tr>
       </thead>
       <tbody id="merged-body"></tbody>
     </table>
   </div>
 
-  <footer>
-    화면에 보이는 순위·변동은 모두 <b>시안용 샘플</b>입니다. 실제 데이터가 연결되면 매일 자동 수집되어 채워집니다.
-    색상·폰트는 교보문고 디자인 시스템 토큰(블루 #5055B1 · 그린 #4DAC27 · Noto Sans KR / Roboto)을 따랐고,
-    상승/급등은 그린, 하락은 레드로 표시했습니다. 급등 기준(현재 4계단)과 통합 순위 계산식은 조정할 수 있습니다.
-  </footer>
 
 </div>
 
@@ -253,6 +252,15 @@ function buildSampleDataset(){
     });
     data[c.id] = { books: picks.filter(b => b.kyobo||b.yes||b.aladin) };
   });
+  // 미리보기용 배송 샘플(결정적) — 실제 data.json 로드 시엔 덮어써져 사용 안 됨
+  const SHIP = ["당일 배송", "6/17(수) 출고예정", "당일 배송", "", ""];
+  Object.values(data).forEach(cat=>{
+    cat.books.forEach(b=>{
+      ["kyobo","yes","aladin"].forEach(s=>{
+        if(b[s]) b[s].ship = SHIP[seeded(b.title+s+"ship")%SHIP.length];
+      });
+    });
+  });
   return data;
 }
 
@@ -302,6 +310,7 @@ function renderStores(){
           <div class="info">
             <div class="bk-title">${b.title}</div>
             <div class="bk-meta">${b.author} · ${b.pub} ${cross}</div>
+            ${b[s.key].ship ? `<div class="bk-ship">${b[s.key].ship}</div>` : ''}
           </div>
           <div class="move">
             ${surge?'<span class="chip surge">급등</span>':''}
@@ -332,7 +341,8 @@ function mCell(rank){
   if(m.type==="new") sm=`<span class="sm" style="color:var(--blue)">NEW</span>`;
   else if(m.type==="same") sm=`<span class="sm">–</span>`;
   else sm=`<span class="sm">${m.type==="up"?"▲":"▼"}${Math.abs(m.diff)}</span>`;
-  return `<span class="m-cell ${m.type}"><span class="nrank">${rank.t}</span>${sm}</span>`;
+  const shipHtml = rank.ship ? `<span class="m-ship">${rank.ship}</span>` : '';
+  return `<span class="m-cell ${m.type}"><span class="nrank">${rank.t}</span>${sm}${shipHtml}</span>`;
 }
 function renderMerged(){
   const body = document.getElementById("merged-body");
@@ -340,19 +350,13 @@ function renderMerged(){
   const sorted = [...books].sort((a,b)=>avgRank(a)-avgRank(b));
   sorted.forEach((b,i)=>{
     const anySurge = STORES.some(s=>{const m=movement(b[s.key]); return m&&m.surge;});
-    const anyNew = STORES.some(s=>{const m=movement(b[s.key]); return m&&m.type==="new";});
-    const badges = `<span class="badges">
-        ${anySurge?'<span class="chip surge">급등</span>':''}
-        ${anyNew?'<span class="chip new">NEW</span>':''}</span>`;
     body.insertAdjacentHTML("beforeend",`
       <tr class="${anySurge?'surge':''}">
         <td class="m-overall">${i+1}</td>
-        <td class="m-book"><div class="bk-title">${b.title}</div>
-            <div class="bk-meta">${b.author} · ${b.pub}</div></td>
+        <td class="m-book"><div class="bk-title">${b.title}</div><div class="bk-meta">${b.author} · ${b.pub}</div></td>
         <td>${mCell(b.kyobo)}</td>
         <td>${mCell(b.yes)}</td>
         <td>${mCell(b.aladin)}</td>
-        <td class="opt">${badges}</td>
       </tr>`);
   });
 }

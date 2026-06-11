@@ -100,17 +100,17 @@ def build_category(today_lists, prev_lists):
                 entry[s] = None
                 continue
             t = today_rm[s][k]
+            it = today_item.get((s, k), {}) or {}
             # 교보만 서점 제공 전날순위(prev_rank_site) 사용 — 값이 정확함.
             #   prev_rank_site 가 0 또는 None 이면 어제 순위권 밖 → NEW(p=None).
             # 예스24·알라딘: 우리 스냅샷 비교값 사용.
             #   (예스24 prev_rank_site 는 대부분 null 로 누락돼 신뢰 불가)
             p = prev_rm[s].get(k)
             if s == "kyobo":
-                it = today_item.get((s, k), {})
                 if "prev_rank_site" in it:
                     prs = it.get("prev_rank_site")
                     p = prs if (prs not in (0, None)) else None
-            entry[s] = {"t": t, "p": p}
+            entry[s] = {"t": t, "p": p, "ship": it.get("ship", "")}
         books.append(entry)
     return books
 
