@@ -277,6 +277,9 @@ const STORES = [
 
 function storeCount(b){return STORES.filter(s=>b[s.key]).length;}
 
+// 화면 표시 개수 제한: 전체 50, 분야별 30
+function viewLimit(){ return currentCat === "all" ? 50 : 30; }
+
 function movement(rank){
   if(!rank) return null;
   if(rank.p===null) return {type:"new", diff:null, surge:rank.t<=10};
@@ -298,7 +301,7 @@ function renderStores(){
   const grid = document.getElementById("store");
   grid.innerHTML = "";
   STORES.forEach(s=>{
-    const items = books.filter(b=>b[s.key]).sort((a,b)=>a[s.key].t-b[s.key].t);
+    const items = books.filter(b=>b[s.key]).sort((a,b)=>a[s.key].t-b[s.key].t).slice(0, viewLimit());
     let rows = "";
     items.forEach(b=>{
       const m = movement(b[s.key]);
@@ -347,7 +350,7 @@ function mCell(rank){
 function renderMerged(){
   const body = document.getElementById("merged-body");
   body.innerHTML="";
-  const sorted = [...books].sort((a,b)=>avgRank(a)-avgRank(b));
+  const sorted = [...books].sort((a,b)=>avgRank(a)-avgRank(b)).slice(0, viewLimit());
   sorted.forEach((b,i)=>{
     const anySurge = STORES.some(s=>{const m=movement(b[s.key]); return m&&m.surge;});
     body.insertAdjacentHTML("beforeend",`
