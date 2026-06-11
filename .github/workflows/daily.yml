@@ -2,9 +2,13 @@ name: collect-bestsellers
 
 on:
   schedule:
-    - cron: "30 21 * * *"
-    - cron: "0 1 * * *"
-  workflow_dispatch:
+    # ── 중요: GitHub Actions cron 은 UTC 기준! (한국시간 = UTC + 9) ──
+    # 하루 2회 수집:
+    #   한국 07:00 (출근 전 — 그날 순위 확인)  =  UTC 22:00(전날)  →  "0 22 * * *"
+    #   한국 15:00 (오후 — 배송일자 갱신분 반영) =  UTC 06:00       →  "0 6 * * *"
+    - cron: "0 22 * * *"
+    - cron: "0 6 * * *"
+  workflow_dispatch:        # 수동 실행 버튼 유지
 
 permissions:
   contents: write
