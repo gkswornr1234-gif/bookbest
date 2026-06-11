@@ -127,6 +127,11 @@ def _rows_to_items(rows, limit):
     for i, r in enumerate(rows, start=1):
         code = (r.get("code") or "").strip()
         isbn = _isbn10_to_13(code) if (code.isdigit() and len(code) == 10) else ""
+        # 배송: 예약판매는 "…N월 N일 출고"(정적) 가 잡혀 'M/D 출고예정' 으로 통일됨.
+        #   재고-있음 도서의 배송 문구("내일 수령"·"양탄자배송" 등)는 '지역변경' 기반
+        #   AJAX 라 정적 HTML 에 없어 비는 경우가 많다. 일간 베스트 도서는 사실상
+        #   재고가 있어 즉시 배송이므로, 출고예정 날짜가 안 잡히면 '당일 배송' 으로 본다.
+        ship = delivery.normalize(r.get("deliv")) or "당일 배송"
         items.append({
             "rank": i,
             "title": r["title"],
@@ -134,7 +139,7 @@ def _rows_to_items(rows, limit):
             "publisher": r.get("pub", ""),
             "isbn": isbn,                      # 신간(K…)은 빈값 → 제목+저자 매칭
             "price": r.get("price"),
-            "ship": delivery.normalize(r.get("deliv")),
+            "ship": ship,
             "url": f"https://www.aladin.co.kr/shop/wproduct.aspx?ItemId={r.get('itemId','')}",
         })
     return items[:limit]
