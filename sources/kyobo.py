@@ -12,6 +12,10 @@
 준비(최초 1회): python -m playwright install chromium
 테스트       : python -m sources.kyobo
 """
+import re
+
+from sources import delivery
+
 STORE_ID = "kyobo"
 API = "https://store.kyobobook.co.kr/api/gw/best/best-seller/online"
 PAGE = "https://store.kyobobook.co.kr/bestseller/online/daily"
@@ -35,6 +39,10 @@ def _parse(payload, limit):
     rows = (payload or {}).get("data", {}).get("bestSeller", []) or []
     items = []
     for it in rows:
+        # 배송: 베스트셀러 응답의 productInfo.shippingText 에 들어있음
+        #   예) "<strong class=blue>내일(금) 오전 7시 전 도착</strong>", "6/17(수) 출고예정"
+        ship_raw = (it.get("productInfo") or {}).get("shippingText") or ""
+        ship_raw = re.sub(r"<[^>]+>", "", ship_raw)        # HTML 태그 제거
         items.append({
             "rank": it.get("prstRnkn"),
             "prev_rank_site": it.get("frmrRnkn"),
@@ -44,6 +52,7 @@ def _parse(payload, limit):
             "isbn": it.get("cmdtCode") or "",
             "price": it.get("sapr") or it.get("price"),
             "category": it.get("saleCmdtClstName") or "",
+            "ship": delivery.normalize(ship_raw),
             "url": f"https://product.kyobobook.co.kr/detail/{it.get('saleCmdtid','')}",
         })
     items = [x for x in items if x["rank"]]

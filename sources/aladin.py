@@ -24,6 +24,8 @@
 STORE_ID = "aladin"
 BASE = "https://www.aladin.co.kr/shop/common/wbest.aspx"
 
+from sources import delivery
+
 _PAGE = None
 
 
@@ -99,12 +101,21 @@ _JS_EXTRACT = r"""
         const priceStr = txt(box.querySelector('.ss_p2 em')).replace(/[^0-9]/g, '');
         const price = priceStr ? parseInt(priceStr, 10) : null;
 
+        // 배송: span.a_black 에 정적으로 들어있음(예: "지금 택배로 주문하면 내일 수령",
+        //       "…6월 17일 출고", "양탄자배송 …"). 배송 관련 문장만 골라낸다.
+        let deliv = '';
+        box.querySelectorAll('span.a_black').forEach((el) => {
+            if (deliv) return;
+            const t = txt(el).replace(/\s+/g, ' ');
+            if (/주문하면|출고|수령|도착|발송|배송/.test(t)) deliv = t;
+        });
+
         // ISBN 후보: chkCart.XXXX
         let code = '';
         const chk = box.querySelector('input[name^="chkCart."]');
         if (chk) { code = (chk.getAttribute('name') || '').split('.')[1] || ''; }
 
-        out.push({title, author, pub, price, itemId, code});
+        out.push({title, author, pub, price, itemId, code, deliv});
     });
     return out;
 }
@@ -123,6 +134,7 @@ def _rows_to_items(rows, limit):
             "publisher": r.get("pub", ""),
             "isbn": isbn,                      # 신간(K…)은 빈값 → 제목+저자 매칭
             "price": r.get("price"),
+            "ship": delivery.normalize(r.get("deliv")),
             "url": f"https://www.aladin.co.kr/shop/wproduct.aspx?ItemId={r.get('itemId','')}",
         })
     return items[:limit]
