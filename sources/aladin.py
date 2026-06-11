@@ -140,8 +140,7 @@ def _rows_to_items(rows, limit):
     return items[:limit]
 
 
-def fetch(limit: int = 50, category_id: int = 0):
-    page = _get_page()
+def _load_once(page, category_id, limit):
     page.goto(list_url(category_id), wait_until="domcontentloaded", timeout=40000)
     try:
         page.wait_for_selector("div.ss_book_box", state="attached", timeout=20000)
@@ -151,8 +150,25 @@ def fetch(limit: int = 50, category_id: int = 0):
         except Exception:
             pass
     page.wait_for_timeout(500)
+    return page.evaluate(_JS_EXTRACT, limit)
 
-    rows = page.evaluate(_JS_EXTRACT, limit)
+
+def fetch(limit: int = 50, category_id: int = 0):
+    import time
+    page = _get_page()
+    rows = _load_once(page, category_id, limit)
+    if not rows:
+        # 0권일 때: 실제로 무슨 페이지가 왔는지 로그로 남기고(차단/캡차 여부 확인) 1회 재시도
+        try:
+            info = (f"title={page.title()!r} url={page.url} "
+                    f"본문앞={page.inner_text('body')[:120].strip()!r}")
+        except Exception as e:
+            info = f"진단수집실패({e.__class__.__name__})"
+        print(f"      [알라딘 0권 진단] {info}")
+        time.sleep(3)
+        rows = _load_once(page, category_id, limit)
+        if rows:
+            print(f"      [알라딘 재시도 성공] {len(rows)}권")
     return _rows_to_items(rows, limit)
 
 
