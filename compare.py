@@ -132,6 +132,42 @@ def latest_prev_snapshot(today):
     return prev_date, prev_data
 
 
+def _store_has_data(snap_by_cat, store):
+    """스냅샷(={cat:{store:[...]}})에서 해당 서점이 한 권이라도 있는지."""
+    return any((snap_by_cat.get(cid) or {}).get(store) for cid in snap_by_cat)
+
+
+def per_store_prev_snapshots(today):
+    """서점별로, 그 서점 데이터가 '있는' 가장 최근 스냅샷(< today)을 고른다.
+    한 서점이 어제 비었더라도(차단 등), 그 서점은 마지막 정상일과 비교하게 되어
+    복구 직후 순위변동이 전부 NEW/급등으로 뜨는 문제를 막는다."""
+    dated = []
+    for f in sorted(glob.glob(os.path.join(SNAP_DIR, "*.json"))):
+        d = os.path.splitext(os.path.basename(f))[0]
+        if d < today:
+            with open(f, encoding="utf-8") as fp:
+                dated.append((d, json.load(fp)))
+    dated.sort(key=lambda x: x[0])                 # 날짜 오름차순
+    prev_date = dated[-1][0] if dated else None    # 표시용: 가장 최근 스냅샷
+    chosen = {}                                    # store -> (date, snap_by_cat)
+    for s in STORES:
+        for d, snap in reversed(dated):            # 최신부터 거슬러 올라가며
+            if _store_has_data(snap, s):
+                chosen[s] = (d, snap)
+                break
+    return prev_date, chosen
+
+
+def _prev_lists_for_cat(chosen, cid):
+    """카테고리별 prev_lists = {store:[items]} 를 서점별 선택 스냅샷에서 조립."""
+    out = {}
+    for s in STORES:
+        sel = chosen.get(s)
+        if sel:
+            out[s] = (sel[1].get(cid) or {}).get(s, []) or []
+    return out
+
+
 # ---------- 전체 빌드 ----------
 def _kst_today():
     # GitHub 서버는 UTC 라서, 한국 날짜(KST=UTC+9)로 맞춰야 어제/오늘이 제대로 구분됨
@@ -147,7 +183,7 @@ def build_all(today_by_cat, today=None):
     with open(os.path.join(SNAP_DIR, f"{today}.json"), "w", encoding="utf-8") as fp:
         json.dump(today_by_cat, fp, ensure_ascii=False, indent=2)
 
-    prev_date, prev_by_cat = latest_prev_snapshot(today)
+    prev_date, chosen = per_store_prev_snapshots(today)
 
     data = {}
     used_cats = []
@@ -156,7 +192,7 @@ def build_all(today_by_cat, today=None):
         today_lists = today_by_cat.get(cid)
         if not today_lists:
             continue                       # 수집 안 된 카테고리는 건너뜀
-        books = build_category(today_lists, prev_by_cat.get(cid, {}))
+        books = build_category(today_lists, _prev_lists_for_cat(chosen, cid))
         if books:
             data[cid] = {"books": books}
             used_cats.append({"id": cid, "label": c["label"]})
