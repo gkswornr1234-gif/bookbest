@@ -70,6 +70,10 @@
   .cat-bar button.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
   .cat-empty{padding:48px 16px;text-align:center;color:var(--ink-3);font-size:14px;
     border:1px dashed var(--line);border-radius:8px}
+  /* 서점 컬럼 안 안내문구 (데이터 0일 때 빈칸 대신) */
+  .col-msg{padding:40px 18px;text-align:center;font-size:13.5px;line-height:1.6;color:var(--ink-3)}
+  .col-msg.col-err{color:var(--red)}
+  .col-msg .col-msg-sub{display:block;margin-top:6px;font-size:12px;color:var(--ink-3)}
   @media(max-width:860px){
     .cat-bar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
       margin-left:-24px;margin-right:-24px;padding:0 24px 6px}
@@ -297,37 +301,58 @@ function moveLabel(m){
 }
 
 /* ----- 서점별 ----- */
+// 서점이 데이터셋 전체에서 데이터를 하나라도 갖고 있는지
+// (전 분야 0 = 수집 실패/차단,  특정 분야만 0 = 그 서점 미제공 분야)
+function storeHasAnyData(key){
+  return Object.values(DATASET).some(cat => (cat.books||[]).some(b => b[key]));
+}
+
 function renderStores(){
   const grid = document.getElementById("store");
   grid.innerHTML = "";
   STORES.forEach(s=>{
     const items = books.filter(b=>b[s.key]).sort((a,b)=>a[s.key].t-b[s.key].t).slice(0, viewLimit());
-    let rows = "";
-    items.forEach(b=>{
-      const m = movement(b[s.key]);
-      const surge = m && m.surge;
-      const cross = storeCount(b)>=2 ? `<span class="cross">${storeCount(b)}사</span>` : "";
-      rows += `
-        <li class="row ${surge?'surge':''}">
-          <div class="rank num">${b[s.key].t}</div>
-          <div class="info">
-            <div class="bk-title">${b.title}</div>
-            <div class="bk-meta">${b.author} · ${b.pub} ${cross}</div>
-            ${b[s.key].ship ? `<div class="bk-ship">${b[s.key].ship}</div>` : ''}
-          </div>
-          <div class="move">
-            ${surge?'<span class="chip surge">급등</span>':''}
-            ${moveLabel(m)}
-          </div>
-        </li>`;
-    });
+    let inner, cntLabel;
+    if(items.length === 0){
+      cntLabel = "–";
+      if(!storeHasAnyData(s.key)){
+        // 전 분야 0 → 수집 실패/일시 차단
+        inner = `<div class="col-msg col-err">⚠️ ${s.name} 데이터를 불러오지 못했습니다
+          <span class="col-msg-sub">일시적인 오류입니다. 다음 수집 때 다시 채워집니다.</span></div>`;
+      } else {
+        // 이 분야만 0 → 그 서점이 해당 분야를 제공하지 않음
+        inner = `<div class="col-msg">이 분야는 ${s.name}에서 제공하지 않습니다</div>`;
+      }
+    } else {
+      let rows = "";
+      items.forEach(b=>{
+        const m = movement(b[s.key]);
+        const surge = m && m.surge;
+        const cross = storeCount(b)>=2 ? `<span class="cross">${storeCount(b)}사</span>` : "";
+        rows += `
+          <li class="row ${surge?'surge':''}">
+            <div class="rank num">${b[s.key].t}</div>
+            <div class="info">
+              <div class="bk-title">${b.title}</div>
+              <div class="bk-meta">${b.author} · ${b.pub} ${cross}</div>
+              ${b[s.key].ship ? `<div class="bk-ship">${b[s.key].ship}</div>` : ''}
+            </div>
+            <div class="move">
+              ${surge?'<span class="chip surge">급등</span>':''}
+              ${moveLabel(m)}
+            </div>
+          </li>`;
+      });
+      inner = `<ul>${rows}</ul>`;
+      cntLabel = `TOP ${items.length}`;
+    }
     grid.insertAdjacentHTML("beforeend", `
       <div class="col">
         <div class="col-head">
           <span class="name">${s.name}</span>
-          <span class="cnt num">TOP ${items.length}</span>
+          <span class="cnt num">${cntLabel}</span>
         </div>
-        <ul>${rows}</ul>
+        ${inner}
       </div>`);
   });
 }
