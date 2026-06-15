@@ -34,19 +34,43 @@ def norm(s):
     return s
 
 
+# 판본 구분자: 같은 제목이라도 한정판/일반판 등은 다른 책(SKU)이므로 키를 분리한다.
+#   norm() 이 괄호를 지워 "…(한정판)" 과 "…" 가 같은 키가 되는 걸 막는다.
+_EDITIONS = ("한정판", "특별판", "리미티드", "양장본", "개정판", "합본", "스페셜")
+
+
+def _edition_tag(title):
+    t = (title or "")
+    for kw in _EDITIONS:
+        if kw in t:
+            return kw            # 모든 서점이 동일 키워드를 쓰면 서로 매칭됨
+    return ""
+
+
 def author_core(s):
     s = (s or "")
     # 여러 저자/역자 중 '첫 저자'만 사용: , · / '외' 앞에서 자른다
     #   예) "짐 머피 저/지여울 역" -> "짐 머피 저"
     s = re.split(r"[,/·]|\s외\b|\s외$", s)[0]
     # 끝쪽 역할어 제거(공백 뒤에 붙은 경우): 지음/저/글/옮김/역/엮음/편저/공저/그림/지은이/옮긴이
-    #   예) "짐 머피 저" -> "짐 머피"
-    s = re.sub(r"(\s+(지은이|옮긴이|지음|옮김|엮음|편저|공저|그림|글|저|역))+\s*$", "", s.strip())
+    #   만화 표기도 포함: 원저/원작/글그림/그림글 (알라딘 "(지은이)" vs 예스 "원저/글그림" 통일)
+    #   예) "짐 머피 저" -> "짐 머피",  "야마다 카네히토 원저" -> "야마다 카네히토"
+    s = re.sub(r"(\s+(지은이|옮긴이|글그림|그림글|원저|원작|지음|옮김|엮음|편저|공저|그림|글|저|역))+\s*$", "", s.strip())
     return norm(s)[:12]
 
 
+def _core_title(title):
+    # 판본 키워드를 본체에서 제거해 정규화 → "…(한정판)" 과 "… 한정판" 이 같은 본체가 됨
+    t = (title or "")
+    for kw in _EDITIONS:
+        t = t.replace(kw, " ")
+    return norm(t)
+
+
 def _ta(it):
-    return norm(it.get("title")) + "|" + author_core(it.get("author"))
+    # (판본 제거한 제목 본체) + 첫저자 + (판본 태그)
+    #   → 한정판끼리는 서점 표기가 달라도 매칭되고, 한정판 vs 일반판은 분리됨
+    return _core_title(it.get("title")) + "|" + author_core(it.get("author")) + "|" + _edition_tag(it.get("title"))
 
 
 def make_keyer(ta_to_isbn):
@@ -72,7 +96,13 @@ def _bridge(today_lists):
 
 
 def _rankmap(lst, keyer):
-    return {keyer(it): it["rank"] for it in (lst or [])}
+    # 같은 키가 둘 이상이면(드묾) 더 좋은(작은) 순위를 남긴다 — 상위 항목이 사라지지 않도록
+    rm = {}
+    for it in (lst or []):
+        k = keyer(it); r = it["rank"]
+        if k not in rm or r < rm[k]:
+            rm[k] = r
+    return rm
 
 
 # ---------- 한 카테고리 비교 ----------
