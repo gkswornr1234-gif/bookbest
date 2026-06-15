@@ -58,6 +58,11 @@ def main():
 
     payload = compare.build_all(today_by_cat)
     compare.save(payload)
+    try:
+        import build_history
+        build_history.build()                 # 스냅샷들 → history.json (+ data.json 에 hkey)
+    except Exception as e:
+        print("history 생성 실패(무시):", e)
     from sources import browser
     browser.close_all()   # 공용 브라우저(교보+예스24) 한 번에 정리
 

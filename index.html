@@ -122,6 +122,36 @@
   .m-book{text-align:center;padding:14px 12px}
   .m-book .bk-title{white-space:normal;font-weight:500;text-align:center;display:block;line-height:1.35}
   .m-book .bk-meta{margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;display:block}
+
+  /* ---------- 순위 히스토리 팝업 ---------- */
+  .bk-clickable{cursor:pointer;transition:background .12s}
+  .bk-clickable:hover{background:var(--bg-soft)}
+  .bk-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(20,22,40,.45);
+    align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+  .bk-card{background:var(--bg);border-radius:14px;width:100%;max-width:640px;
+    box-shadow:0 24px 60px rgba(0,0,0,.25);padding:26px 26px 22px;position:relative;
+    animation:pop .18s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+  .bk-close{position:absolute;top:14px;right:16px;border:none;background:none;font-size:26px;
+    line-height:1;color:var(--ink-3);cursor:pointer;padding:2px 6px}
+  .bk-close:hover{color:var(--ink)}
+  .bk-head{padding-right:30px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
+  .bk-modal-title{font-size:19px;font-weight:700;line-height:1.35;letter-spacing:-0.02em}
+  .bk-modal-sub{font-size:13px;color:var(--ink-3);margin-top:5px}
+  .bk-controls{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .bk-seg{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;padding:3px}
+  .bk-seg button{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--ink-2);
+    border:none;background:none;padding:6px 13px;border-radius:6px;cursor:pointer;transition:.12s}
+  .bk-seg button:empty{display:none}
+  .bk-seg button.active{background:var(--bg);color:var(--blue);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .bk-seg button:disabled{color:#CFCFCF;cursor:not-allowed}
+  .bk-chart{width:100%}
+  .bk-chart svg{width:100%;height:auto;display:block}
+  .bk-empty{padding:48px 16px;text-align:center;color:var(--ink-3);font-size:14px;line-height:1.6}
+  .bk-legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
+  .bk-legend span{display:inline-flex;align-items:center;gap:6px}
+  .bk-legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+  .bk-peak{text-align:center;font-size:12px;color:var(--ink-3);margin-top:2px}
   .m-cell{display:inline-flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15}
   .m-cell .nrank{font-family:'Roboto',sans-serif;font-weight:700;font-size:15px;color:var(--ink);letter-spacing:0}
   .m-cell .sm{font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;letter-spacing:0}
@@ -189,6 +219,30 @@
   </div>
 
 
+</div>
+
+<!-- 도서 순위 히스토리 팝업 -->
+<div id="bk-modal" class="bk-modal" onclick="if(event.target===this)closeBook()">
+  <div class="bk-card">
+    <button class="bk-close" onclick="closeBook()" aria-label="닫기">×</button>
+    <div class="bk-head">
+      <div class="bk-modal-title" id="bk-modal-title"></div>
+      <div class="bk-modal-sub" id="bk-modal-sub"></div>
+    </div>
+    <div class="bk-controls">
+      <div class="bk-seg" id="bk-cat-seg">
+        <button id="bk-cat-all" class="active" onclick="setHistCat('all')">종합</button>
+        <button id="bk-cat-cur" onclick="setHistCat(this.dataset.cat)"></button>
+      </div>
+      <div class="bk-seg bk-period" id="bk-period-seg">
+        <button data-p="7"  class="active" onclick="setHistPeriod(7)">7일</button>
+        <button data-p="30" onclick="setHistPeriod(30)">30일</button>
+        <button data-p="90" onclick="setHistPeriod(90)">90일</button>
+      </div>
+    </div>
+    <div class="bk-chart" id="bk-chart"></div>
+    <div class="bk-legend" id="bk-legend"></div>
+  </div>
 </div>
 
 <script>
@@ -376,10 +430,11 @@ function renderMerged(){
   const body = document.getElementById("merged-body");
   body.innerHTML="";
   const sorted = [...books].sort((a,b)=>avgRank(a)-avgRank(b)).slice(0, viewLimit());
+  MERGED_BOOKS = sorted;
   sorted.forEach((b,i)=>{
     const anySurge = STORES.some(s=>{const m=movement(b[s.key]); return m&&m.surge;});
     body.insertAdjacentHTML("beforeend",`
-      <tr class="${anySurge?'surge':''}">
+      <tr class="bk-clickable ${anySurge?'surge':''}" onclick="openBook(MERGED_BOOKS[${i}])">
         <td class="m-overall">${i+1}</td>
         <td class="m-book"><div class="bk-title">${b.title}</div><div class="bk-meta">${b.author} · ${b.pub}</div></td>
         <td>${mCell(b.kyobo)}</td>
@@ -387,6 +442,118 @@ function renderMerged(){
         <td>${mCell(b.aladin)}</td>
       </tr>`);
   });
+}
+let MERGED_BOOKS = [];
+
+// ---------- 순위 히스토리 팝업 ----------
+const HIST_COLORS = {kyobo:"#4DAC27", yes:"#0080FF", aladin:"#F21C8C"};
+let HISTORY = null;                       // null=미로드, false=없음, obj=로드됨
+let histState = {book:null, cat:"all", period:7, data:null};
+
+async function loadHistory(){
+  if(HISTORY!==null) return HISTORY;
+  try{
+    const r = await fetch("./history.json",{cache:"no-store"});
+    HISTORY = r.ok ? await r.json() : false;
+  }catch(e){ HISTORY = false; }
+  return HISTORY;
+}
+function dateSpanDays(dates){
+  return dates.length<2 ? 0 : (new Date(dates[dates.length-1]) - new Date(dates[0]))/86400000;
+}
+
+async function openBook(book){
+  if(!book) return;
+  document.getElementById("bk-modal-title").textContent = book.title||"";
+  document.getElementById("bk-modal-sub").textContent = [book.author,book.pub].filter(Boolean).join(" · ");
+  histState = {book, cat:"all", period:7, data:null};
+  document.getElementById("bk-modal").style.display="flex";
+  const h = await loadHistory();
+  histState.data = (h && book.hkey) ? (h.books[book.hkey]||null) : null;
+  // 카테고리 토글: '현재 분야' 버튼 표시 여부
+  const curBtn = document.getElementById("bk-cat-cur");
+  const curCat = CATEGORIES.find(c=>c.id===currentCat);
+  const hasCur = histState.data && currentCat!=="all" && histState.data.series[currentCat];
+  if(hasCur){ curBtn.textContent=curCat?curCat.label:currentCat; curBtn.dataset.cat=currentCat; curBtn.style.display=""; }
+  else { curBtn.style.display="none"; }
+  // 기간탭: 데이터 범위에 따라 활성/비활성
+  if(h){
+    const span=dateSpanDays(h.dates);
+    document.querySelector('#bk-period-seg [data-p="30"]').disabled = span<=7;
+    document.querySelector('#bk-period-seg [data-p="90"]').disabled = span<=30;
+  }
+  setHistCat("all");
+}
+function closeBook(){ document.getElementById("bk-modal").style.display="none"; }
+
+function setHistCat(cat){
+  histState.cat=cat;
+  document.getElementById("bk-cat-all").classList.toggle("active", cat==="all");
+  document.getElementById("bk-cat-cur").classList.toggle("active", cat!=="all");
+  renderHist();
+}
+function setHistPeriod(p){
+  histState.period=p;
+  document.querySelectorAll('#bk-period-seg button').forEach(b=>b.classList.toggle("active", +b.dataset.p===p));
+  renderHist();
+}
+
+function renderHist(){
+  const box=document.getElementById("bk-chart"), leg=document.getElementById("bk-legend");
+  const bk=histState.data;
+  if(!HISTORY || !bk){
+    box.innerHTML=`<div class="bk-empty">아직 순위 히스토리가 없어요.<br>매일 자동 수집되며 점점 쌓여요 📈</div>`;
+    leg.innerHTML=""; return;
+  }
+  const allDates=HISTORY.dates;
+  const cutoff=new Date(allDates[allDates.length-1]);
+  cutoff.setDate(cutoff.getDate()-(histState.period-1));
+  const picked=allDates.map((d,i)=>({d,i})).filter(o=> new Date(o.d)>=cutoff);
+  const dates=picked.map(o=>o.d), idxs=picked.map(o=>o.i);
+  const series=bk.series[histState.cat]||{};
+  box.innerHTML=chartSVG(dates, idxs, series);
+  let allVals=[];
+  let legHtml=STORES.map(s=>{
+    const vals=idxs.map(i=>(series[s.key]||[])[i]).filter(v=>v!=null);
+    allVals=allVals.concat(vals);
+    return `<span><i style="background:${HIST_COLORS[s.key]}"></i>${s.name}</span>`;
+  }).join("");
+  const peak=allVals.length?Math.min(...allVals):null;
+  leg.innerHTML=legHtml + (peak!=null?`<span class="bk-peak">최고 ${peak}위</span>`:"");
+}
+
+function segPath(pts){
+  return pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ")+" ";
+}
+function chartSVG(dates, idxs, series){
+  const W=620,H=290,pad={l:34,r:14,t:16,b:30};
+  const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b, n=dates.length;
+  let maxRank=10;
+  STORES.forEach(s=>(series[s.key]||[]).forEach((v,i)=>{ if(v&&idxs.indexOf(i)>=0) maxRank=Math.max(maxRank,v); }));
+  const yMax=Math.max(10, Math.ceil(maxRank/10)*10);
+  const X=i=> n<=1?pad.l+iw/2 : pad.l+iw*i/(n-1);
+  const Y=r=> pad.t+ih*(r-1)/(yMax-1);
+  const yt=[1, Math.round(yMax/3), Math.round(2*yMax/3), yMax].filter((v,i,a)=>a.indexOf(v)===i);
+  let g="";
+  yt.forEach(r=>{ g+=`<line x1="${pad.l}" y1="${Y(r).toFixed(1)}" x2="${W-pad.r}" y2="${Y(r).toFixed(1)}" stroke="#EEEEEE"/>`
+    +`<text x="${pad.l-7}" y="${(Y(r)+3).toFixed(1)}" text-anchor="end" font-size="10" fill="#AAAAAA" font-family="Roboto,sans-serif">${r}</text>`; });
+  const step=Math.max(1,Math.ceil(n/6));
+  let xl="";
+  dates.forEach((d,pos)=>{ if(pos%step===0||pos===n-1) xl+=`<text x="${X(pos).toFixed(1)}" y="${H-10}" text-anchor="middle" font-size="9.5" fill="#AAAAAA" font-family="Roboto,sans-serif">${d.slice(5)}</text>`; });
+  let lines="";
+  STORES.forEach(s=>{
+    const arr=series[s.key]||[], col=HIST_COLORS[s.key];
+    let seg=[], path="";
+    idxs.forEach((origIdx,pos)=>{
+      const v=arr[origIdx];
+      if(v==null){ if(seg.length){ path+=segPath(seg); seg=[]; } }
+      else seg.push([X(pos),Y(v)]);
+    });
+    if(seg.length) path+=segPath(seg);
+    if(path) lines+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    idxs.forEach((origIdx,pos)=>{ const v=arr[origIdx]; if(v!=null) lines+=`<circle cx="${X(pos).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.4" fill="#fff" stroke="${col}" stroke-width="2"/>`; });
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}${xl}${lines}</svg>`;
 }
 
 function setView(v){
