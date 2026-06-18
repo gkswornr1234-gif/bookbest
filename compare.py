@@ -47,6 +47,25 @@ def _edition_tag(title):
     return ""
 
 
+# 권수 구분: 같은 제목이라도 상/하권은 다른 책. 교보는 한글 괄호 (상)(하),
+#   예스·알라딘은 한자 上/中/下 를 쓰는데, norm() 이 괄호·한자를 지워
+#   상권과 하권이 같은 키가 되는 걸 막는다. (한글↔한자를 같은 권으로 통일)
+_VOL_MAP = {"상": "상", "上": "상", "중": "중", "中": "중", "하": "하", "下": "하"}
+
+
+def _vol_tag(title):
+    t = (title or "")
+    # 한국어 권수: 괄호 안 (상)(중)(하) 만 인식 (상실·하루 같은 오탐 방지)
+    m = re.search(r"\((상|중|하)\)", t)
+    if m:
+        return _VOL_MAP[m.group(1)]
+    # 한자 권수: 上中下 (제목에 거의 안 쓰여 단독 인식 안전)
+    for ch in ("上", "中", "下"):
+        if ch in t:
+            return _VOL_MAP[ch]
+    return ""
+
+
 def author_core(s):
     s = (s or "")
     # 여러 저자/역자 중 '첫 저자'만 사용: , · / '외' 앞에서 자른다
@@ -68,9 +87,10 @@ def _core_title(title):
 
 
 def _ta(it):
-    # (판본 제거한 제목 본체) + 첫저자 + (판본 태그)
-    #   → 한정판끼리는 서점 표기가 달라도 매칭되고, 한정판 vs 일반판은 분리됨
-    return _core_title(it.get("title")) + "|" + author_core(it.get("author")) + "|" + _edition_tag(it.get("title"))
+    # (판본 제거한 제목 본체) + 첫저자 + (판본 태그) + (권수 태그)
+    #   → 한정판·상하권을 표기 차이와 무관하게 같은 책끼리 매칭
+    return (_core_title(it.get("title")) + "|" + author_core(it.get("author"))
+            + "|" + _edition_tag(it.get("title")) + "|" + _vol_tag(it.get("title")))
 
 
 def make_keyer(ta_to_isbn):
