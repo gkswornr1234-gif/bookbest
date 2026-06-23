@@ -1,12 +1,11 @@
 name: collect-bestsellers
 
 on:
-  schedule:
-    # ── 중요: GitHub Actions cron 은 UTC 기준! (한국시간 = UTC + 9) ──
-    # 하루 한 번, 한국 오전 06:00 에만 수집.
-    #   한국 06:00  =  UTC 21:00(전날)  →  "0 21 * * *"
-    - cron: "0 21 * * *"
-  workflow_dispatch:        # 수동 실행 버튼은 유지
+  # 외부 스케줄러(cron-job.org)가 매일 06:00(KST)에 이 이벤트로 깨운다.
+  repository_dispatch:
+    types: [run-collect]
+  workflow_dispatch:          # 수동 실행 버튼도 유지
+  # ※ GitHub 자체 schedule 은 정시를 못 지켜서 제거함 → 외부 스케줄러로 대체
 
 permissions:
   contents: write
