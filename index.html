@@ -56,6 +56,10 @@
   .tabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--blue)}
   .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);align-items:center}
   .legend span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .excel-btn{border:1px solid var(--green);color:var(--green);background:#fff;font-family:inherit;font-size:13px;font-weight:700;
+    padding:7px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;display:inline-flex;align-items:center;gap:6px}
+  .excel-btn:hover{background:var(--green);color:#fff}
+  .excel-btn:disabled{opacity:.4;cursor:default}
   .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
   .chip{font-family:'Roboto',sans-serif;font-weight:700;font-size:11px;padding:1px 6px;border-radius:3px;letter-spacing:0;line-height:1.5}
   .chip.surge{background:var(--green);color:#fff}
@@ -170,6 +174,7 @@
     h1{font-size:26px;line-height:36px}
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -197,6 +202,7 @@
       <span><span class="dot" style="background:var(--green)"></span> 상승</span>
       <span><span class="dot" style="background:var(--red)"></span> 하락</span>
     </div>
+    <button id="excel-btn" class="excel-btn" onclick="exportExcel()" title="현재 분야를 엑셀로 내려받기">⬇ 엑셀 내려받기</button>
   </div>
 
   <div id="cat-bar" class="cat-bar"></div>
@@ -556,6 +562,64 @@ function chartSVG(dates, idxs, series){
   return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}${xl}${lines}</svg>`;
 }
 
+/* ----- 엑셀 내려받기 (현재 분야, 3사 나란히) ----- */
+function moveText(m){
+  if(!m) return "";
+  if(m.type==="new") return "NEW";
+  if(m.type==="same") return "–";
+  return (m.type==="up"?"▲":"▼") + Math.abs(m.diff);
+}
+
+function exportExcel(){
+  if(typeof XLSX==="undefined"){ alert("엑셀 모듈을 불러오는 중입니다. 잠시 후 다시 시도해 주세요."); return; }
+  const cat = CATEGORIES.find(c=>c.id===currentCat);
+  const catLabel = cat ? cat.label : String(currentCat);
+  const lim = viewLimit();
+  const cur = (DATASET[currentCat] && DATASET[currentCat].books) ? DATASET[currentCat].books : [];
+  if(!cur.length){ alert("이 분야는 내려받을 데이터가 없습니다."); return; }
+  // 서점별 정렬 목록 (화면과 동일)
+  const per = STORES.map(s => cur.filter(b=>b[s.key]).sort((a,b)=>a[s.key].t-b[s.key].t).slice(0,lim));
+  const maxLen = Math.max(0, ...per.map(a=>a.length));
+  const SUB = ["순위","도서명","저자","출판사","배송","전일대비"];
+  const BLK = 6, GAP = 1;
+  const aoa = [];
+  // 0행: 서점명 (병합), 1행: 소제목
+  const r0=[], r1=[];
+  STORES.forEach((s,i)=>{
+    r0.push(s.name,"","","","","");
+    SUB.forEach(h=>r1.push(h));
+    if(i<STORES.length-1){ r0.push(""); r1.push(""); }
+  });
+  aoa.push(r0, r1);
+  // 데이터: 행 = 순위 위치 (서점마다 다른 책)
+  for(let r=0;r<maxLen;r++){
+    const row=[];
+    per.forEach((list,i)=>{
+      const b=list[r];
+      if(b){ const rk=b[STORES[i].key];
+        row.push(rk.t, b.title||"", b.author||"", b.pub||"", rk.ship||"", moveText(movement(rk)));
+      } else row.push("","","","","","");
+      if(i<STORES.length-1) row.push("");
+    });
+    aoa.push(row);
+  }
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  // 서점명 셀 병합
+  ws["!merges"]=[]; let c=0;
+  STORES.forEach(()=>{ ws["!merges"].push({s:{r:0,c},e:{r:0,c:c+BLK-1}}); c+=BLK+GAP; });
+  // 열 너비
+  const cols=[]; STORES.forEach((s,i)=>{
+    cols.push({wch:5},{wch:34},{wch:15},{wch:15},{wch:16},{wch:9});
+    if(i<STORES.length-1) cols.push({wch:2});
+  });
+  ws["!cols"]=cols;
+  const wb = XLSX.utils.book_new();
+  const sheetName = catLabel.replace(/[\\\/\?\*\[\]:]/g,"").slice(0,31) || "베스트셀러";
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  const dstr = (DATA_TODAY||"").replaceAll("-","");
+  XLSX.writeFile(wb, `베스트셀러_${catLabel}_${dstr||"export"}.xlsx`);
+}
+
 function setView(v){
   currentView = v;
   document.getElementById("btn-store").classList.toggle("active", v==="store");
@@ -564,6 +628,7 @@ function setView(v){
 }
 
 let currentView = "store";
+let DATA_TODAY = "";
 
 function renderCategoryBar(){
   const bar = document.getElementById("cat-bar");
@@ -581,6 +646,8 @@ function renderCategoryBar(){
 
 function render(){
   books = (DATASET[currentCat] && DATASET[currentCat].books) ? DATASET[currentCat].books : [];
+  const xbtn = document.getElementById("excel-btn");
+  if(xbtn) xbtn.style.display = (currentView==="store" && books.length) ? "inline-flex" : "none";
   const storeEl = document.getElementById("store");
   const mergedEl = document.getElementById("merged");
 
@@ -612,6 +679,7 @@ async function init(){
         currentCat = CATEGORIES[0] ? CATEGORIES[0].id : "all";
         if(typeof data.surge_gap === "number") SURGE_GAP = data.surge_gap;
         document.getElementById("today-el").textContent = fmtDate(data.today);
+        DATA_TODAY = data.today || "";
         document.getElementById("vs-el").textContent =
           data.prev ? `전날(${fmtDate(data.prev)}) 대비 순위 변동` : "전날 데이터 없음 (첫 수집일)";
         const tag = document.getElementById("sample-tag"); if(tag) tag.remove();
