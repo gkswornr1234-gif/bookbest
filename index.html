@@ -46,10 +46,23 @@
   .dateline{text-align:right;flex-shrink:0}
   .dateline .today{font-family:'Roboto',sans-serif;font-weight:700;font-size:22px;letter-spacing:0}
   .dateline .vs{font-size:13px;color:var(--ink-2);margin-top:3px}
+  .date-nav{display:inline-flex;align-items:center;gap:4px;justify-content:flex-end}
+  .date-arrow{font-family:'Roboto',sans-serif;font-size:20px;line-height:1;color:var(--ink-3);background:none;border:none;
+    cursor:pointer;padding:2px 6px;border-radius:6px;transition:background .12s,color .12s}
+  .date-arrow:hover:not(:disabled){background:var(--line);color:var(--ink)}
+  .date-arrow:disabled{opacity:.28;cursor:default}
+  button.today{background:none;border:none;cursor:pointer;padding:0 2px;color:inherit;border-bottom:1px dashed transparent;transition:border-color .12s}
+  button.today:hover{border-bottom-color:var(--ink-3)}
+  .date-input-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .back-today{margin-top:6px;font-family:inherit;font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-bg,rgba(0,128,255,.08));
+    border:1px solid var(--blue);border-radius:7px;padding:4px 10px;cursor:pointer}
+  .back-today:hover{background:var(--blue);color:#fff}
+  .past-badge{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--ink-2);border-radius:5px;padding:1px 7px;margin-left:6px;vertical-align:middle}
   .sample-tag{display:inline-block;margin-top:9px;font-size:11px;font-weight:500;color:var(--ink-3);background:var(--bg-soft);border:1px solid var(--line);padding:3px 9px;border-radius:4px}
 
   /* ---------- Controls ---------- */
   .controls{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:22px 0 6px}
+  .controls-right{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-left:auto}
   .tabs{display:flex;gap:4px}
   .tabs button{font-family:inherit;font-size:15px;font-weight:500;letter-spacing:-0.01em;border:none;background:none;color:var(--ink-2);padding:9px 4px;margin-right:18px;cursor:pointer;position:relative;transition:.15s}
   .tabs button.active{color:var(--blue);font-weight:700}
@@ -184,8 +197,14 @@
     <div class="title-row">
       <h1>일간 베스트셀러 <span class="accent">한눈에</span> 비교</h1>
       <div class="dateline">
-        <div class="today num" id="today-el">2026.06.08</div>
+        <div class="date-nav">
+          <button id="date-prev" class="date-arrow" onclick="stepDate(-1)" title="이전 날짜" aria-label="이전 날짜">‹</button>
+          <button id="date-cur" class="today num" onclick="openDatePicker()" title="날짜 선택 (달력)">2026.06.08</button>
+          <button id="date-next" class="date-arrow" onclick="stepDate(1)" title="다음 날짜" aria-label="다음 날짜">›</button>
+          <input type="date" id="date-input" class="date-input-hidden" onchange="onDatePick(this.value)" tabindex="-1" aria-hidden="true">
+        </div>
         <div class="vs" id="vs-el">전날(06.07) 대비 순위 변동</div>
+        <button id="back-today" class="back-today" onclick="goToday()" style="display:none">↩ 오늘로 돌아가기</button>
         <div class="sample-tag" id="sample-tag">SAMPLE · 화면 시안용 가짜 데이터</div>
       </div>
     </div>
@@ -196,6 +215,7 @@
       <button id="btn-store" class="active" onclick="setView('store')">서점별 보기</button>
       <button id="btn-merged" onclick="setView('merged')">도서별 비교</button>
     </div>
+    <div class="controls-right">
     <div class="legend">
       <span><span class="chip surge">급등</span> 4계단 이상 상승</span>
       <span><span class="chip new">NEW</span> 신규 진입</span>
@@ -203,6 +223,7 @@
       <span><span class="dot" style="background:var(--red)"></span> 하락</span>
     </div>
     <button id="excel-btn" class="excel-btn" onclick="exportExcel()" title="현재 분야를 엑셀로 내려받기">⬇ 엑셀 내려받기</button>
+    </div>
   </div>
 
   <div id="cat-bar" class="cat-bar"></div>
@@ -621,6 +642,7 @@ function exportExcel(){
 }
 
 function setView(v){
+  if(v==="merged" && isPast()){ VIEW_DATE = DATA_TODAY; refreshDateUI(); }  // 도서별 비교는 오늘 기준
   currentView = v;
   document.getElementById("btn-store").classList.toggle("active", v==="store");
   document.getElementById("btn-merged").classList.toggle("active", v==="merged");
@@ -629,6 +651,112 @@ function setView(v){
 
 let currentView = "store";
 let DATA_TODAY = "";
+let VIEW_DATE = "";                 // 지금 보고 있는 날짜 ("" 또는 오늘=라이브)
+let LIVE_VS = "전날 대비 순위 변동";  // 오늘 화면 부제(과거→오늘 복귀용)
+
+/* ===== 과거 날짜 보기 (가벼운 버전) ===== */
+function availableDates(){
+  let ds = (HISTORY && HISTORY.dates && HISTORY.dates.length) ? HISTORY.dates.slice() : [];
+  if(DATA_TODAY && !ds.includes(DATA_TODAY)){       // 오늘이 history에 아직 없으면 마지막에 추가
+    if(ds.length && DATA_TODAY > ds[ds.length-1]) ds.push(DATA_TODAY);
+    else if(!ds.length) ds = [DATA_TODAY];
+  }
+  return ds;
+}
+function isPast(){ return !!(VIEW_DATE && DATA_TODAY && VIEW_DATE !== DATA_TODAY); }
+
+async function ensureHistory(){
+  if(HISTORY === null) await loadHistory();
+  setupDateNav();
+}
+function setupDateNav(){
+  if(!VIEW_DATE) VIEW_DATE = DATA_TODAY;
+  const inp = document.getElementById("date-input");
+  const ds = availableDates();
+  if(inp && ds.length){ inp.min = ds[0]; inp.max = ds[ds.length-1]; }
+  refreshDateUI();
+}
+function refreshDateUI(){
+  const ds = availableDates();
+  const cur=document.getElementById("date-cur"), prev=document.getElementById("date-prev"),
+        next=document.getElementById("date-next"), back=document.getElementById("back-today"),
+        vs=document.getElementById("vs-el");
+  const navOn = !!(HISTORY && ds.length>1);
+  const i = ds.indexOf(VIEW_DATE);
+  if(cur){ cur.innerHTML = fmtDate(VIEW_DATE||DATA_TODAY) + (isPast()?'<span class="past-badge">과거</span>':''); cur.style.cursor = navOn?"pointer":"default"; }
+  if(prev) prev.disabled = !navOn || i<=0;
+  if(next) next.disabled = !navOn || i<0 || i>=ds.length-1;
+  if(back) back.style.display = isPast()?"inline-block":"none";
+  const lg=document.querySelector(".legend"); if(lg) lg.style.display = isPast()?"none":"";
+  if(vs)   vs.textContent = isPast() ? "과거 순위 보기 · 전일 대비 변동은 표시되지 않음" : LIVE_VS;
+}
+function applyDate(date){ VIEW_DATE = date || DATA_TODAY; refreshDateUI(); render(); }
+function goToday(){ applyDate(DATA_TODAY); }
+async function stepDate(dir){
+  await ensureHistory();
+  const ds = availableDates(); let i = ds.indexOf(VIEW_DATE);
+  if(i<0) i = ds.length-1;
+  const ni = i + dir;
+  if(ni<0 || ni>=ds.length) return;
+  applyDate(ds[ni]);
+}
+async function openDatePicker(){
+  await ensureHistory();
+  const ds = availableDates();
+  if(!HISTORY || ds.length<2) return;     // 과거 데이터 없으면 달력 비활성
+  const inp = document.getElementById("date-input");
+  inp.value = VIEW_DATE || DATA_TODAY;
+  if(inp.showPicker){ try{ inp.showPicker(); return; }catch(e){} }
+  inp.focus(); inp.click();
+}
+function onDatePick(val){ if(val) applyDate(nearestAvailable(val)); }
+function nearestAvailable(val){
+  const ds = availableDates();
+  if(ds.includes(val)) return val;
+  let best=null; for(const d of ds){ if(d<=val) best=d; }   // 빈 날짜는 그 이하 가장 가까운 날로
+  return best || ds[0] || DATA_TODAY;
+}
+
+function renderPast(){
+  const storeEl=document.getElementById("store"), mergedEl=document.getElementById("merged");
+  const xbtn=document.getElementById("excel-btn"); if(xbtn) xbtn.style.display="none";  // 과거는 엑셀 비표시
+  if(mergedEl) mergedEl.style.display="none";
+  storeEl.style.display="grid";
+  renderStoresForDate(VIEW_DATE);
+}
+function renderStoresForDate(date){
+  const grid=document.getElementById("store"); grid.innerHTML="";
+  const H=HISTORY, di=(H&&H.dates)?H.dates.indexOf(date):-1;
+  STORES.forEach(s=>{
+    let items=[];
+    if(di>=0){
+      for(const gk in H.books){
+        const bk=H.books[gk], ser=bk.series && bk.series[currentCat];
+        if(!ser || !ser[s.key]) continue;
+        const r=ser[s.key][di];
+        if(typeof r==="number") items.push({rank:r, title:bk.title, author:bk.author, pub:bk.pub});
+      }
+      items.sort((a,b)=>a.rank-b.rank);
+      items=items.slice(0, viewLimit());
+    }
+    let inner, cnt;
+    if(!items.length){ cnt="–"; inner=`<div class="col-msg">이 날짜·분야는 ${s.name} 데이터가 없습니다</div>`; }
+    else{
+      let rows="";
+      items.forEach(b=>{
+        rows+=`<li class="row">
+          <div class="rank num">${b.rank}</div>
+          <div class="info">
+            <div class="bk-title">${b.title||""}</div>
+            <div class="bk-meta">${b.author||""}${b.pub?(" · "+b.pub):""}</div>
+          </div></li>`;
+      });
+      inner=`<ul>${rows}</ul>`; cnt=`TOP ${items.length}`;
+    }
+    grid.insertAdjacentHTML("beforeend",
+      `<div class="col"><div class="col-head"><span class="name">${s.name}</span><span class="cnt num">${cnt}</span></div>${inner}</div>`);
+  });
+}
 
 function renderCategoryBar(){
   const bar = document.getElementById("cat-bar");
@@ -645,6 +773,7 @@ function renderCategoryBar(){
 }
 
 function render(){
+  if(isPast()){ renderPast(); return; }
   books = (DATASET[currentCat] && DATASET[currentCat].books) ? DATASET[currentCat].books : [];
   const xbtn = document.getElementById("excel-btn");
   if(xbtn) xbtn.style.display = (currentView==="store" && books.length) ? "inline-flex" : "none";
@@ -678,16 +807,19 @@ async function init(){
         CATEGORIES = data.categories;
         currentCat = CATEGORIES[0] ? CATEGORIES[0].id : "all";
         if(typeof data.surge_gap === "number") SURGE_GAP = data.surge_gap;
-        document.getElementById("today-el").textContent = fmtDate(data.today);
+        document.getElementById("date-cur").textContent = fmtDate(data.today);
         DATA_TODAY = data.today || "";
-        document.getElementById("vs-el").textContent =
-          data.prev ? `전날(${fmtDate(data.prev)}) 대비 순위 변동` : "전날 데이터 없음 (첫 수집일)";
+        VIEW_DATE = DATA_TODAY;
+        LIVE_VS = data.prev ? `전날(${fmtDate(data.prev)}) 대비 순위 변동` : "전날 데이터 없음 (첫 수집일)";
+        document.getElementById("vs-el").textContent = LIVE_VS;
         const tag = document.getElementById("sample-tag"); if(tag) tag.remove();
       }
     }
   }catch(e){ /* data.json 없음(미리보기) → 샘플 표시 */ }
   renderCategoryBar();
   render();
+  // 과거 날짜 보기용 history 백그라운드 로딩 → 날짜 내비 준비
+  loadHistory().then(()=>{ setupDateNav(); });
 }
 
 init();
