@@ -164,6 +164,14 @@
   .bk-seg button:disabled{color:#CFCFCF;cursor:not-allowed}
   .bk-chart{width:100%}
   .bk-chart svg{width:100%;height:auto;display:block}
+  .bk-chart-wrap{position:relative}
+  .bk-guide{position:absolute;top:0;width:1px;background:#CFCFCF;pointer-events:none;z-index:4;display:none}
+  .bk-tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:8px;
+    box-shadow:0 4px 16px rgba(0,0,0,.13);padding:8px 11px;font-size:12px;line-height:1.55;white-space:nowrap;
+    transform:translateX(-50%);z-index:5;display:none}
+  .bk-tip .tip-date{font-weight:700;font-family:'Roboto',sans-serif;margin-bottom:3px;color:var(--ink)}
+  .bk-tip .tip-row{display:flex;align-items:center;gap:6px}
+  .bk-tip .tip-row i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
   .bk-empty{padding:48px 16px;text-align:center;color:var(--ink-3);font-size:14px;line-height:1.6}
   .bk-legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
   .bk-legend span{display:inline-flex;align-items:center;gap:6px}
@@ -267,7 +275,11 @@
         <button data-p="90" onclick="setHistPeriod(90)">90일</button>
       </div>
     </div>
-    <div class="bk-chart" id="bk-chart"></div>
+    <div class="bk-chart-wrap" id="bk-chart-wrap">
+      <div class="bk-chart" id="bk-chart"></div>
+      <div class="bk-guide" id="bk-guide"></div>
+      <div class="bk-tip" id="bk-tip"></div>
+    </div>
     <div class="bk-legend" id="bk-legend"></div>
   </div>
 </div>
@@ -391,6 +403,7 @@ function storeHasAnyData(key){
 function renderStores(){
   const grid = document.getElementById("store");
   grid.innerHTML = "";
+  STORE_BOOKS = [];
   STORES.forEach(s=>{
     const items = books.filter(b=>b[s.key]).sort((a,b)=>a[s.key].t-b[s.key].t).slice(0, viewLimit());
     let inner, cntLabel;
@@ -410,8 +423,9 @@ function renderStores(){
         const m = movement(b[s.key]);
         const surge = m && m.surge;
         const cross = storeCount(b)>=2 ? `<span class="cross">${storeCount(b)}사</span>` : "";
+        const bi = STORE_BOOKS.push(b)-1;
         rows += `
-          <li class="row ${surge?'surge':''}">
+          <li class="row bk-clickable ${surge?'surge':''}" onclick="openBook(STORE_BOOKS[${bi}])">
             <div class="rank num">${b[s.key].t}</div>
             <div class="info">
               <div class="bk-title">${b.title}</div>
@@ -471,6 +485,7 @@ function renderMerged(){
   });
 }
 let MERGED_BOOKS = [];
+let STORE_BOOKS = [];
 
 // ---------- 순위 히스토리 팝업 ----------
 const HIST_COLORS = {kyobo:"#4DAC27", yes:"#0080FF", aladin:"#F21C8C"};
@@ -539,6 +554,7 @@ function renderHist(){
   const dates=picked.map(o=>o.d), idxs=picked.map(o=>o.i);
   const series=bk.series[histState.cat]||{};
   box.innerHTML=chartSVG(dates, idxs, series);
+  attachChartHover();
   let allVals=[];
   let legHtml=STORES.map(s=>{
     const vals=idxs.map(i=>(series[s.key]||[])[i]).filter(v=>v!=null);
@@ -580,7 +596,42 @@ function chartSVG(dates, idxs, series){
     if(path) lines+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
     idxs.forEach((origIdx,pos)=>{ const v=arr[origIdx]; if(v!=null) lines+=`<circle cx="${X(pos).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.4" fill="#fff" stroke="${col}" stroke-width="2"/>`; });
   });
+  CHART_META={W,H,pad,iw,n,dates,idxs,series};   // 호버 툴팁용
   return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${g}${xl}${lines}</svg>`;
+}
+
+let CHART_META=null;
+function attachChartHover(){
+  const wrap=document.getElementById("bk-chart-wrap");
+  const svg=document.querySelector("#bk-chart svg");
+  const tip=document.getElementById("bk-tip"), guide=document.getElementById("bk-guide");
+  if(!svg || !CHART_META) return;
+  const M=CHART_META;
+  const Xpos=i=> M.n<=1 ? M.pad.l+M.iw/2 : M.pad.l+M.iw*i/(M.n-1);
+  function show(cx){
+    const rect=svg.getBoundingClientRect(); if(!rect.width) return;
+    const scale=rect.width/M.W;
+    const svgX=(cx-rect.left)/scale;
+    let pos=0,best=1e9;
+    for(let p=0;p<M.n;p++){ const dd=Math.abs(Xpos(p)-svgX); if(dd<best){best=dd;pos=p;} }
+    const px=Xpos(pos)*scale;
+    const day=M.dates[pos], oi=M.idxs[pos];
+    let rows="";
+    STORES.forEach(s=>{ const v=(M.series[s.key]||[])[oi];
+      if(v!=null) rows+=`<div class="tip-row"><i style="background:${HIST_COLORS[s.key]}"></i>${s.name} ${v}위</div>`; });
+    if(!rows) rows=`<div class="tip-row" style="color:#aaa">데이터 없음</div>`;
+    tip.innerHTML=`<div class="tip-date">${day.slice(5).replace("-","/")}</div>${rows}`;
+    guide.style.left=px+"px"; guide.style.height=rect.height+"px"; guide.style.display="block";
+    tip.style.display="block";
+    const ww=wrap.clientWidth, tw=tip.offsetWidth;
+    tip.style.left=Math.max(tw/2+2, Math.min(ww-tw/2-2, px))+"px";
+    tip.style.top="6px";
+  }
+  function hide(){ tip.style.display="none"; guide.style.display="none"; }
+  svg.addEventListener("mousemove", e=>show(e.clientX));
+  svg.addEventListener("mouseleave", hide);
+  svg.addEventListener("touchstart", e=>{ if(e.touches[0]) show(e.touches[0].clientX); }, {passive:true});
+  svg.addEventListener("touchmove",  e=>{ if(e.touches[0]) show(e.touches[0].clientX); }, {passive:true});
 }
 
 /* ----- 엑셀 내려받기 (현재 분야, 3사 나란히) ----- */
