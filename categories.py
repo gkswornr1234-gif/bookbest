@@ -20,19 +20,19 @@ CATEGORIES = [
     {"id": "home",     "label": "가정/육아",     "aladin": 2030, "yes24": "001001001", "kyobo": "07"},
     {"id": "cook",     "label": "요리",          "aladin": 1230, "yes24": "001001001001",    "kyobo": "08"},
     {"id": "health",   "label": "건강",          "aladin": 55890, "yes24": "001001011",    "kyobo": "09"},
-    {"id": "hobby",    "label": "취미/실용/스포츠", "aladin": None, "yes24": "001001011",  "kyobo": "11"},
+    {"id": "hobby",    "label": "취미/실용/스포츠", "aladin": 55890, "yes24": "001001011",  "kyobo": "11"},  # 알라딘 건강/취미(건강과 동일 카테고리)
     {"id": "econ",     "label": "경제/경영",     "aladin": 170,  "yes24": "001001025", "kyobo": "13"},
     {"id": "self",     "label": "자기계발",      "aladin": 336,  "yes24": "001001026", "kyobo": "15"},
     {"id": "social",   "label": "정치/사회",     "aladin": 798,  "yes24": "001001022", "kyobo": "17"},
     {"id": "history",  "label": "역사/문화",     "aladin": 74,   "yes24": "001001010", "kyobo": "19"},
     {"id": "religion", "label": "종교",          "aladin": 1237, "yes24": "001001021",    "kyobo": "21"},
     {"id": "art",      "label": "예술/대중문화", "aladin": 517,  "yes24": "001001007", "kyobo": "23"},
-    {"id": "ref_mh",   "label": "중/고등참고서", "aladin": None, "yes24": "",    "kyobo": "25"},
-    {"id": "tech",     "label": "기술/공학",     "aladin": None, "yes24": "",    "kyobo": "26"},
+    {"id": "ref_mh",   "label": "중/고등참고서", "aladin": 76001, "yes24": "001001050",   "kyobo": "25"},  # 교보=중+고 통합, 타사=고등참고서 기준
+    {"id": "tech",     "label": "기술/공학",     "aladin": None, "yes24": "001001014",   "kyobo": "26"},  # 예스=대학교재 (알라딘은 아직 없음→교보+예스 2사)
     {"id": "lang",     "label": "외국어",        "aladin": 1322, "yes24": "001001004",    "kyobo": "27"},
     {"id": "science",  "label": "과학",          "aladin": 987,  "yes24": "001001002",    "kyobo": "29"},
-    {"id": "exam",     "label": "취업/수험서",   "aladin": 1383, "yes24": "",    "kyobo": "31"},
-    {"id": "travel",   "label": "여행",          "aladin": 1196, "yes24": "",    "kyobo": "32"},
+    {"id": "exam",     "label": "취업/수험서",   "aladin": 1383, "yes24": "001001015",   "kyobo": "31"},  # 예스=수험서/자격증
+    {"id": "travel",   "label": "여행",          "aladin": 1196, "yes24": "001001009",   "kyobo": "32"},  # 예스=여행
     {"id": "it",       "label": "컴퓨터/IT",     "aladin": 351,  "yes24": "001001003",    "kyobo": "33"},
     {"id": "mag",      "label": "잡지",          "aladin": 2913, "yes24": "001001024",    "kyobo": "35"},
     {"id": "teen",     "label": "청소년",        "aladin": 1137, "yes24": "001001005",    "kyobo": "38"},
