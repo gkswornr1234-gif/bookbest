@@ -555,6 +555,8 @@ async function openBook(book){
     document.querySelector('#bk-period-seg [data-p="30"]').disabled = span<=7;
     document.querySelector('#bk-period-seg [data-p="90"]').disabled = span<=30;
   }
+  // 기간 버튼도 7일로 초기화(이전 팝업에서 30/90 눌렀던 하이라이트가 남지 않도록)
+  document.querySelectorAll('#bk-period-seg button').forEach(b=>b.classList.toggle("active", +b.dataset.p===7));
   setHistCat("all");
 }
 function closeBook(){ document.getElementById("bk-modal").style.display="none"; }
