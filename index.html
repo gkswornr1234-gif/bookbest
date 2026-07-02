@@ -526,7 +526,7 @@ let histState = {book:null, cat:"all", period:7, data:null};
 async function loadHistory(){
   if(HISTORY!==null) return HISTORY;
   try{
-    const r = await fetch("./history.json",{cache:"no-store"});
+    const r = await fetch("./history.json?v="+Date.now(),{cache:"no-store"});
     HISTORY = r.ok ? await r.json() : false;
   }catch(e){ HISTORY = false; }
   return HISTORY;
@@ -883,7 +883,7 @@ function fmtDate(d){ return d ? d.replaceAll("-", ".") : ""; }
 
 async function init(){
   try{
-    const res = await fetch("./data.json", {cache:"no-store"});
+    const res = await fetch("./data.json?v="+Date.now(), {cache:"no-store"});
     if(res.ok){
       const data = await res.json();
       if(data.data && data.categories){
