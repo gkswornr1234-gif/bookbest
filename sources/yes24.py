@@ -85,7 +85,9 @@ _JS_EXTRACT = r"""
             });
         }
 
-        out.push({rank, prev, title, author, pub, price, goods, deliv});
+        let salespoint = null;
+        { const m = (li.textContent || '').match(/판매지수[^0-9]*([0-9][0-9,]*)/); if (m) salespoint = parseInt(m[1].replace(/,/g, ''), 10); }
+        out.push({rank, prev, title, author, pub, price, goods, deliv, salespoint});
     });
     return out;
 }
@@ -106,6 +108,7 @@ def _rows_to_items(rows, limit):
             "category": "",
             "ship": delivery.normalize(r.get("deliv")),
             "url": f"https://www.yes24.com/product/goods/{r.get('goods','')}",
+            "salespoint": r.get("salespoint"),
         })
     items.sort(key=lambda x: x["rank"])
     return items[:limit]

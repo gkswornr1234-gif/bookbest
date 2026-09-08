@@ -115,7 +115,9 @@ _JS_EXTRACT = r"""
         const chk = box.querySelector('input[name^="chkCart."]');
         if (chk) { code = (chk.getAttribute('name') || '').split('.')[1] || ''; }
 
-        out.push({title, author, pub, price, itemId, code, deliv});
+        let salespoint = null;
+        { const m = (box.textContent || '').match(/세일즈포인트[^0-9]*([0-9][0-9,]*)/); if (m) salespoint = parseInt(m[1].replace(/,/g, ''), 10); }
+        out.push({title, author, pub, price, itemId, code, deliv, salespoint});
     });
     return out;
 }
@@ -141,6 +143,7 @@ def _rows_to_items(rows, limit):
             "price": r.get("price"),
             "ship": ship,
             "url": f"https://www.aladin.co.kr/shop/wproduct.aspx?ItemId={r.get('itemId','')}",
+            "salespoint": r.get("salespoint"),
         })
     return items[:limit]
 
