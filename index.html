@@ -135,7 +135,7 @@
   .info{flex:1;min-width:0}
   .bk-title{font-size:15px;font-weight:500;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bk-meta{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;display:flex;align-items:center;gap:6px}
-  .bk-ship{font-size:11px;color:var(--ink-3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em}
+  .bk-ship{font-size:11px;color:var(--ink-3);margin-top:4px;letter-spacing:-0.01em;line-height:1.4}
   .move{flex-shrink:0;text-align:right;min-width:50px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
   .arrow{font-family:'Roboto',sans-serif;font-weight:700;font-size:13px;letter-spacing:0;display:inline-flex;align-items:center;gap:1px}
   .arrow.up{color:var(--green)} .arrow.down{color:var(--red)} .arrow.same{color:var(--ink-3);font-weight:500}
@@ -180,6 +180,8 @@
   .bk-seg button:empty{display:none}
   .bk-seg button.active{background:var(--bg);color:var(--blue);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.08)}
   .bk-seg button:disabled{color:#CFCFCF;cursor:not-allowed}
+  .bk-cat-select{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--ink-2);background:transparent;border:none;border-radius:6px;padding:4px 6px;cursor:pointer;outline:none;max-width:140px}
+  .bk-cat-select.active{background:var(--bg);color:var(--blue);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.08)}
   .bk-chart{width:100%}
   .bk-chart svg{width:100%;height:auto;display:block}
   .bk-chart-wrap{position:relative}
@@ -192,7 +194,6 @@
   .bk-tip .tip-row i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
   .bk-empty{padding:48px 16px;text-align:center;color:var(--ink-3);font-size:14px;line-height:1.6}
   .bk-legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
-  .bk-sp2{font-size:11px;color:var(--ink-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em}
   .m-sp{font-size:10.5px;color:var(--ink-3);margin-top:1px;line-height:1.2;white-space:nowrap;letter-spacing:-0.02em}
   .bk-links{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
   .bk-links:empty{display:none}
@@ -347,7 +348,7 @@
     <div class="bk-controls">
       <div class="bk-seg" id="bk-cat-seg">
         <button id="bk-cat-all" class="active" onclick="setHistCat('all')">종합</button>
-        <button id="bk-cat-cur" onclick="setHistCat(this.dataset.cat)"></button>
+        <select id="bk-cat-select" class="bk-cat-select" onchange="onHistCatSelect(this.value)" style="display:none"></select>
       </div>
       <div class="bk-seg bk-period" id="bk-period-seg">
         <button data-p="7"  class="active" onclick="setHistPeriod(7)">7일</button>
@@ -524,7 +525,7 @@ function renderStores(){
             <div class="info">
               <div class="bk-title">${b.title}</div>
               <div class="bk-meta">${b.author} · ${b.pub} ${cross}</div>
-              ${b[s.key].ship ? `<div class="bk-ship">${b[s.key].ship}</div>` : ''}${b[s.key].sp ? `<div class="bk-sp2">${spLabel(s.key)} ${b[s.key].sp.toLocaleString()}</div>` : ''}
+              ${(b[s.key].ship || b[s.key].sp) ? `<div class="bk-ship">${[b[s.key].ship, b[s.key].sp ? `판매지수 ${b[s.key].sp.toLocaleString()}` : ""].filter(Boolean).join(" · ")}</div>` : ''}
             </div>
             <div class="move">
               ${surge?'<span class="chip surge">급등</span>':''}
@@ -599,18 +600,24 @@ function dateSpanDays(dates){
   return dates.length<2 ? 0 : (new Date(dates[dates.length-1]) - new Date(dates[0]))/86400000;
 }
 
-function spLabel(storeKey){ return storeKey==="aladin" ? "세일즈포인트" : "판매지수"; }
+function spLabel(storeKey){ return "판매지수"; }
 
+function storeSearchUrl(storeKey, title){
+  const q=encodeURIComponent(title||"");
+  if(storeKey==="kyobo")  return `https://search.kyobobook.co.kr/search?keyword=${q}`;
+  if(storeKey==="yes")    return `https://www.yes24.com/product/search?query=${q}`;
+  if(storeKey==="aladin") return `https://www.aladin.co.kr/search/wsearchresult.aspx?SearchWord=${q}`;
+  return "#";
+}
 function renderBookLinks(book){
   const linkEl=document.getElementById("bk-links"); if(!linkEl) return;
   const names={kyobo:"교보문고", yes:"예스24", aladin:"알라딘"};
   let links="";
   STORES.forEach(s=>{
     const info=book && book[s.key];
-    if(info && info.url){
-      const c=HIST_COLORS[s.key];
-      links+=`<a class="bk-link" href="${info.url}" target="_blank" rel="noopener noreferrer" style="border-color:${c};color:${c}">${names[s.key]||s.name} <span class="arr">↗</span></a>`;
-    }
+    const url=(info && info.url) ? info.url : storeSearchUrl(s.key, book && book.title);
+    const c=HIST_COLORS[s.key];
+    links+=`<a class="bk-link" href="${url}" target="_blank" rel="noopener noreferrer" style="border-color:${c};color:${c}">${names[s.key]||s.name} <span class="arr">↗</span></a>`;
   });
   linkEl.innerHTML=links;
 }
@@ -625,11 +632,19 @@ async function openBook(book){
   const h = await loadHistory();
   histState.data = (h && book.hkey) ? (h.books[book.hkey]||null) : null;
   // 카테고리 토글: '현재 분야' 버튼 표시 여부
-  const curBtn = document.getElementById("bk-cat-cur");
-  const curCat = CATEGORIES.find(c=>c.id===currentCat);
-  const hasCur = histState.data && currentCat!=="all" && histState.data.series[currentCat];
-  if(hasCur){ curBtn.textContent=curCat?curCat.label:currentCat; curBtn.dataset.cat=currentCat; curBtn.style.display=""; }
-  else { curBtn.style.display="none"; }
+  // 분야 드롭다운: 그 책이 실제 속한 분야들 (검색으로 열어도 분야별 조회 가능)
+  const catOrder = CATEGORIES.map(c=>c.id);
+  const sel = document.getElementById("bk-cat-select");
+  if(sel){
+    const cats = (histState.data ? Object.keys(histState.data.series) : [])
+      .filter(c=>c!=="all")
+      .sort((a,b)=>catOrder.indexOf(a)-catOrder.indexOf(b));
+    if(cats.length){
+      sel.innerHTML = `<option value="">분야별 보기</option>` +
+        cats.map(cid=>{ const c=CATEGORIES.find(x=>x.id===cid); return `<option value="${cid}">${c?c.label:cid}</option>`; }).join("");
+      sel.value=""; sel.classList.remove("active"); sel.style.display="";
+    } else { sel.innerHTML=""; sel.style.display="none"; }
+  }
   // 기간탭: 데이터 범위에 따라 활성/비활성
   if(h){
     const span=dateSpanDays(h.dates);
@@ -645,9 +660,11 @@ function closeBook(){ document.getElementById("bk-modal").style.display="none"; 
 function setHistCat(cat){
   histState.cat=cat;
   document.getElementById("bk-cat-all").classList.toggle("active", cat==="all");
-  document.getElementById("bk-cat-cur").classList.toggle("active", cat!=="all");
+  const sel=document.getElementById("bk-cat-select");
+  if(sel){ sel.classList.toggle("active", cat!=="all"); sel.value = cat==="all" ? "" : cat; }
   renderHist();
 }
+function onHistCatSelect(v){ if(v) setHistCat(v); }
 function setHistPeriod(p){
   histState.period=p;
   document.querySelectorAll('#bk-period-seg button').forEach(b=>b.classList.toggle("active", +b.dataset.p===p));
