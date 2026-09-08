@@ -106,7 +106,16 @@ def _ta(it):
             + "|" + _edition_tag(it.get("title")) + "|" + _vol_tag(it.get("title")))
 
 
-def make_keyer(ta_to_isbn):
+_TITLE_MIN = 6  # 제목 본체가 이 글자수 이상일 때만 '제목만' 브리지 허용(짧고 흔한 제목 오병합 방지)
+
+
+def _title_key(it):
+    # 저자를 뺀 제목 키(판본/권수 태그 포함) — 저자 표기만 다른 같은 책을 묶는 보조 키
+    return _core_title(it.get("title")) + "|" + _edition_tag(it.get("title")) + "|" + _vol_tag(it.get("title"))
+
+
+def make_keyer(bridges):
+    ta_to_isbn, title_to_isbn = bridges
     def unikey(it):
         isbn = (it.get("isbn") or "").strip()
         if isbn:
@@ -114,18 +123,26 @@ def make_keyer(ta_to_isbn):
         ta = _ta(it)
         if ta in ta_to_isbn:
             return "isbn:" + ta_to_isbn[ta]
+        tk = _title_key(it)                     # 저자 표기가 달라도, 유일·distinctive 제목이면 같은 책으로
+        if tk in title_to_isbn:
+            return "isbn:" + title_to_isbn[tk]
         return "ta:" + ta
     return unikey
 
 
 def _bridge(today_lists):
-    b = {}
+    b = {}                 # _ta -> isbn (기존 저자기반 브리지)
+    tmap = {}              # _title_key -> {isbn,...}  (제목기반 브리지 후보)
     for items in today_lists.values():
         for it in (items or []):
             isbn = (it.get("isbn") or "").strip()
             if isbn:
                 b.setdefault(_ta(it), isbn)
-    return b
+                if len(_core_title(it.get("title"))) >= _TITLE_MIN:
+                    tmap.setdefault(_title_key(it), set()).add(isbn)
+    # 한 제목이 '유일한 isbn'에만 대응될 때만 채택(둘 이상이면 모호 → 제외해 오병합 방지)
+    title_to_isbn = {tk: next(iter(v)) for tk, v in tmap.items() if len(v) == 1}
+    return b, title_to_isbn
 
 
 def _rankmap(lst, keyer):

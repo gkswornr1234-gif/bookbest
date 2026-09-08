@@ -653,7 +653,9 @@ async function openBook(book){
   }
   // 기간 버튼도 7일로 초기화(이전 팝업에서 30/90 눌렀던 하이라이트가 남지 않도록)
   document.querySelectorAll('#bk-period-seg button').forEach(b=>b.classList.toggle("active", +b.dataset.p===7));
-  setHistCat("all");
+  // 현재 보고 있는 분야 탭에서 열었으면 그 분야를 먼저 보여줌 (전체/검색이거나 그 분야에 없으면 종합)
+  const startCat = (currentCat!=="all" && histState.data && histState.data.series[currentCat]) ? currentCat : "all";
+  setHistCat(startCat);
 }
 function closeBook(){ document.getElementById("bk-modal").style.display="none"; }
 
