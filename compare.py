@@ -178,7 +178,7 @@ def build_category(today_lists, prev_lists):
                 if "prev_rank_site" in it:
                     prs = it.get("prev_rank_site")
                     p = prs if (prs not in (0, None)) else None
-            entry[s] = {"t": t, "p": p, "ship": it.get("ship", "")}
+            entry[s] = {"t": t, "p": p, "ship": it.get("ship", ""), "url": it.get("url", ""), "sp": it.get("salespoint")}
         books.append(entry)
     return books
 

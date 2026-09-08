@@ -40,10 +40,10 @@
   header{padding:40px 0 0}
   .crumb{font-size:13px;color:var(--ink-3);font-weight:500;margin-bottom:14px}
   .crumb b{color:var(--ink-2);font-weight:500}
-  .title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-bottom:22px;border-bottom:2px solid var(--ink)}
+  .title-row{display:flex;align-items:center;gap:14px 22px;flex-wrap:wrap;padding-bottom:18px;border-bottom:2px solid var(--ink)}
   h1{font-size:32px;line-height:44px;font-weight:700;letter-spacing:-0.02em}
   h1 .accent{color:var(--blue)}
-  .dateline{text-align:right;flex-shrink:0}
+  .dateline{text-align:right;flex-shrink:0;margin-left:auto}
   .dateline .today{font-family:'Roboto',sans-serif;font-weight:700;font-size:22px;letter-spacing:0}
   .dateline .vs{font-size:13px;color:var(--ink-2);margin-top:3px}
   .date-nav{display:inline-flex;align-items:center;gap:4px;justify-content:flex-end}
@@ -63,6 +63,24 @@
   /* ---------- Controls ---------- */
   .controls{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:22px 0 6px}
   .controls-right{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-left:auto}
+  .search-wrap{position:relative;flex:0 1 380px;min-width:180px}
+  .search-input{width:100%;box-sizing:border-box;font-family:inherit;font-size:14px;padding:11px 42px 11px 18px;
+    border:1.5px solid var(--line);border-radius:22px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+  .search-input::placeholder{color:var(--ink-3)}
+  .search-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(31,157,60,.10)}
+  .search-ico{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.5;pointer-events:none}
+  .search-clear{position:absolute;right:40px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;font-size:13px;color:var(--ink-3);padding:4px;line-height:1}
+  .search-results{position:absolute;left:0;right:0;top:calc(100% + 5px);background:#fff;border:1px solid var(--line);
+    border-radius:10px;box-shadow:0 8px 26px rgba(0,0,0,.13);z-index:30;max-height:360px;overflow-y:auto;display:none}
+  .search-results.on{display:block}
+  .sr-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--line-2)}
+  .sr-item:last-child{border-bottom:none}
+  .sr-item:hover{background:var(--bg-soft)}
+  .sr-info{min-width:0}
+  .sr-title{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sr-meta{font-size:12px;color:var(--ink-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sr-stores{margin-left:auto;font-size:11px;color:var(--ink-2);white-space:nowrap;flex-shrink:0}
+  .sr-empty{padding:16px;color:var(--ink-3);font-size:13px;text-align:center}
   .tabs{display:flex;gap:4px}
   .tabs button{font-family:inherit;font-size:15px;font-weight:500;letter-spacing:-0.01em;border:none;background:none;color:var(--ink-2);padding:9px 4px;margin-right:18px;cursor:pointer;position:relative;transition:.15s}
   .tabs button.active{color:var(--blue);font-weight:700}
@@ -174,6 +192,15 @@
   .bk-tip .tip-row i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
   .bk-empty{padding:48px 16px;text-align:center;color:var(--ink-3);font-size:14px;line-height:1.6}
   .bk-legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
+  .bk-sp2{font-size:11px;color:var(--ink-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em}
+  .m-sp{font-size:10.5px;color:var(--ink-3);margin-top:1px;line-height:1.2;white-space:nowrap;letter-spacing:-0.02em}
+  .bk-links{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .bk-links:empty{display:none}
+  .bk-link{flex:1 1 0;min-width:92px;display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    font-family:inherit;font-size:13px;font-weight:700;text-decoration:none;padding:10px 10px;border-radius:9px;
+    border:1.5px solid var(--line);background:#fff;transition:background .12s,filter .12s}
+  .bk-link:hover{filter:brightness(0.96);background:var(--bg-soft)}
+  .bk-link .arr{font-size:11px;opacity:.7}
   .bk-legend span{display:inline-flex;align-items:center;gap:6px}
   .bk-legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
   .bk-peak{text-align:center;font-size:12px;color:var(--ink-3);margin-top:2px}
@@ -225,6 +252,22 @@
     .dateline{text-align:left}
     h1{font-size:26px;line-height:36px}
   }
+  .notice-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .notice-card{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 26px 18px;box-shadow:0 20px 60px rgba(0,0,0,.28);max-height:86vh;overflow-y:auto}
+  .notice-title{font-size:19px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+  .notice-meta{font-size:12px;color:var(--ink-3);margin-bottom:14px;font-family:'Roboto',sans-serif;font-weight:500}
+  .notice-body{font-size:14px;line-height:1.65;color:#333}
+  .notice-body p{margin:8px 0}
+  .notice-body ul{list-style:none;margin:8px 0;padding-left:4px}
+  .notice-body li{position:relative;padding-left:16px;margin:6px 0}
+  .notice-body li::before{content:"•";color:var(--green);font-weight:700;position:absolute;left:2px;top:-1px}
+  .notice-body b{color:var(--ink)}
+  .notice-form-btn{display:block;text-align:center;margin-top:18px;padding:12px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;font-size:14px;text-decoration:none;transition:filter .12s}
+  .notice-form-btn:hover{filter:brightness(0.95)}
+  .notice-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px}
+  .notice-hide{background:none;border:none;color:var(--ink-3);font-size:13px;cursor:pointer;font-family:inherit;padding:6px 2px}
+  .notice-hide:hover{color:var(--ink-2)}
+  .notice-close{background:var(--ink);color:#fff;border:none;border-radius:9px;padding:9px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -235,6 +278,12 @@
     <div class="crumb">베스트 <b>›</b> 온라인 일간 베스트 <b>›</b> 3사 비교</div>
     <div class="title-row">
       <h1>일간 베스트셀러 <span class="accent">한눈에</span> 비교</h1>
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input id="search-input" class="search-input" type="text" placeholder="도서명·저자 검색" autocomplete="off" oninput="onSearch(this.value)" onfocus="onSearch(this.value)">
+        <button id="search-clear" class="search-clear" onclick="clearSearch()" style="display:none" aria-label="검색 지우기">✕</button>
+        <div id="search-results" class="search-results"></div>
+      </div>
       <div class="dateline">
         <div class="date-nav">
           <button id="date-prev" class="date-arrow" onclick="stepDate(-1)" title="이전 날짜" aria-label="이전 날짜">‹</button>
@@ -312,6 +361,20 @@
       <div class="bk-tip" id="bk-tip"></div>
     </div>
     <div class="bk-legend" id="bk-legend"></div>
+    <div class="bk-links" id="bk-links"></div>
+  </div>
+</div>
+
+<div id="notice-modal" class="notice-modal" style="display:none" onclick="if(event.target===this)closeNotice()">
+  <div class="notice-card">
+    <div class="notice-title" id="notice-title"></div>
+    <div class="notice-meta" id="notice-meta"></div>
+    <div class="notice-body" id="notice-body"></div>
+    <a id="notice-form" class="notice-form-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none">💬 의견 보내기 →</a>
+    <div class="notice-actions">
+      <button class="notice-hide" onclick="dismissNoticeToday()">오늘 하루 안 보기</button>
+      <button class="notice-close" onclick="closeNotice()">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -461,7 +524,7 @@ function renderStores(){
             <div class="info">
               <div class="bk-title">${b.title}</div>
               <div class="bk-meta">${b.author} · ${b.pub} ${cross}</div>
-              ${b[s.key].ship ? `<div class="bk-ship">${b[s.key].ship}</div>` : ''}
+              ${b[s.key].ship ? `<div class="bk-ship">${b[s.key].ship}</div>` : ''}${b[s.key].sp ? `<div class="bk-sp2">${spLabel(s.key)} ${b[s.key].sp.toLocaleString()}</div>` : ''}
             </div>
             <div class="move">
               ${surge?'<span class="chip surge">급등</span>':''}
@@ -488,7 +551,7 @@ function avgRank(b){
   const rs = STORES.map(s=>b[s.key]?b[s.key].t:null).filter(x=>x!==null);
   return rs.reduce((a,c)=>a+c,0)/rs.length;
 }
-function mCell(rank){
+function mCell(rank, storeKey){
   if(!rank) return `<span class="m-na">–</span>`;
   const m = movement(rank);
   let sm;
@@ -496,7 +559,8 @@ function mCell(rank){
   else if(m.type==="same") sm=`<span class="sm">–</span>`;
   else sm=`<span class="sm">${m.type==="up"?"▲":"▼"}${Math.abs(m.diff)}</span>`;
   const shipHtml = rank.ship ? `<span class="m-ship">${rank.ship}</span>` : '';
-  return `<span class="m-cell ${m.type}"><span class="nrank">${rank.t}</span>${sm}${shipHtml}</span>`;
+  const spHtml = rank.sp ? `<span class="m-sp">${spLabel(storeKey)} ${rank.sp.toLocaleString()}</span>` : '';
+  return `<span class="m-cell ${m.type}"><span class="nrank">${rank.t}</span>${sm}${shipHtml}${spHtml}</span>`;
 }
 function renderMerged(){
   const body = document.getElementById("merged-body");
@@ -509,9 +573,9 @@ function renderMerged(){
       <tr class="bk-clickable ${anySurge?'surge':''}" onclick="openBook(MERGED_BOOKS[${i}])">
         <td class="m-overall">${i+1}</td>
         <td class="m-book"><div class="bk-title">${b.title}</div><div class="bk-meta">${b.author} · ${b.pub}</div></td>
-        <td>${mCell(b.kyobo)}</td>
-        <td>${mCell(b.yes)}</td>
-        <td>${mCell(b.aladin)}</td>
+        <td>${mCell(b.kyobo,'kyobo')}</td>
+        <td>${mCell(b.yes,'yes')}</td>
+        <td>${mCell(b.aladin,'aladin')}</td>
       </tr>`);
   });
 }
@@ -535,10 +599,27 @@ function dateSpanDays(dates){
   return dates.length<2 ? 0 : (new Date(dates[dates.length-1]) - new Date(dates[0]))/86400000;
 }
 
+function spLabel(storeKey){ return storeKey==="aladin" ? "세일즈포인트" : "판매지수"; }
+
+function renderBookLinks(book){
+  const linkEl=document.getElementById("bk-links"); if(!linkEl) return;
+  const names={kyobo:"교보문고", yes:"예스24", aladin:"알라딘"};
+  let links="";
+  STORES.forEach(s=>{
+    const info=book && book[s.key];
+    if(info && info.url){
+      const c=HIST_COLORS[s.key];
+      links+=`<a class="bk-link" href="${info.url}" target="_blank" rel="noopener noreferrer" style="border-color:${c};color:${c}">${names[s.key]||s.name} <span class="arr">↗</span></a>`;
+    }
+  });
+  linkEl.innerHTML=links;
+}
+
 async function openBook(book){
   if(!book) return;
   document.getElementById("bk-modal-title").textContent = book.title||"";
   document.getElementById("bk-modal-sub").textContent = [book.author,book.pub].filter(Boolean).join(" · ");
+  renderBookLinks(book);
   histState = {book, cat:"all", period:7, data:null};
   document.getElementById("bk-modal").style.display="flex";
   const h = await loadHistory();
@@ -725,6 +806,59 @@ function exportExcel(){
   XLSX.writeFile(wb, `베스트셀러_${catLabel}_${dstr||"export"}.xlsx`);
 }
 
+/* ===== 도서 검색 (전 분야 통합 → 그래프) ===== */
+let SEARCH_INDEX = [];
+let SR_CUR = [];
+function normS(s){ return (s||"").toLowerCase().replace(/\s+/g,""); }
+function buildSearchIndex(){
+  const seen={}; SEARCH_INDEX=[];
+  for(const cid in DATASET){
+    const bks=(DATASET[cid] && DATASET[cid].books) ? DATASET[cid].books : [];
+    for(const b of bks){
+      const key=b.hkey || ("ta:"+(b.title||"")+"|"+(b.author||""));
+      if(seen[key]) continue; seen[key]=1;
+      SEARCH_INDEX.push({title:b.title||"", author:b.author||"", pub:b.pub||"", book:b});
+    }
+  }
+}
+function onSearch(q){
+  const box=document.getElementById("search-results");
+  const clr=document.getElementById("search-clear");
+  q=(q||"").trim();
+  if(clr) clr.style.display=q?"block":"none";
+  if(!q){ box.classList.remove("on"); box.innerHTML=""; return; }
+  if(!SEARCH_INDEX.length) buildSearchIndex();
+  const nq=normS(q);
+  SR_CUR=SEARCH_INDEX.filter(it=>normS(it.title).includes(nq)||normS(it.author).includes(nq)).slice(0,12);
+  if(!SR_CUR.length){ box.innerHTML='<div class="sr-empty">검색 결과가 없습니다</div>'; box.classList.add("on"); return; }
+  box.innerHTML=SR_CUR.map((it,i)=>{
+    const b=it.book;
+    const st=STORES.filter(s=>b[s.key]).map(s=>`${s.name.replace("문고","").replace("24","")} ${b[s.key].t}`).join(" · ");
+    const meta=[it.author,it.pub].filter(Boolean).join(" · ");
+    return `<div class="sr-item" onclick="pickSearch(${i})">
+      <div class="sr-info"><div class="sr-title">${it.title}</div><div class="sr-meta">${meta}</div></div>
+      <div class="sr-stores">${st||"–"}</div></div>`;
+  }).join("");
+  box.classList.add("on");
+}
+function pickSearch(i){
+  const it=SR_CUR[i]; if(!it) return;
+  clearSearch();
+  openBook(it.book);
+}
+function clearSearch(){
+  const inp=document.getElementById("search-input");
+  const box=document.getElementById("search-results");
+  const clr=document.getElementById("search-clear");
+  if(inp) inp.value="";
+  if(box){ box.classList.remove("on"); box.innerHTML=""; }
+  if(clr) clr.style.display="none";
+}
+document.addEventListener("click", e=>{
+  const w=document.querySelector(".search-wrap");
+  if(w && !w.contains(e.target)){ const box=document.getElementById("search-results"); if(box) box.classList.remove("on"); }
+});
+
 function setView(v){
   if(v==="merged" && isPast()){ VIEW_DATE = DATA_TODAY; refreshDateUI(); }  // 도서별 비교는 오늘 기준
   currentView = v;
@@ -902,11 +1036,56 @@ async function init(){
   }catch(e){ /* data.json 없음(미리보기) → 샘플 표시 */ }
   renderCategoryBar();
   render();
+  buildSearchIndex();
   // 과거 날짜 보기용 history 백그라운드 로딩 → 날짜 내비 준비
   loadHistory().then(()=>{ setupDateNav(); });
 }
 
+/* ===== 첫 화면 공지/의견 팝업 =====
+   새 공지를 낼 때: id 값을 바꾸면(오늘 '안 보기' 누른 사람에게도) 다시 뜹니다.
+   구글폼을 만들면 formUrl 에 링크만 넣으면 '의견 보내기' 버튼이 활성화됩니다. */
+const NOTICE = {
+  id: "2026-09-08",
+  date: "2026.09.08",
+  ver: "1.0",
+  title: "📢 업데이트 안내",
+  html: `
+    <p>3사 베스트셀러 비교 대시보드에 새 기능이 추가됐어요.</p>
+    <ul>
+      <li><b>도서명·저자 검색</b> (상단 검색창)</li>
+      <li><b>도서 클릭 시 서점별 상세페이지 바로가기</b></li>
+      <li><b>판매지수 표시</b> (예스24·알라딘)</li>
+    </ul>
+    <p>이용하시면서 불편한 점이나 개선 의견이 있으면 아래로 보내주세요. 🙏</p>
+  `,
+  formUrl: "https://forms.gle/fbV2tzmUwjpZng6fA"   // 구글폼(의견 보내기) 링크
+};
+
+function _todayStr(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function _noticeKey(){ return NOTICE.id + "|" + _todayStr(); }
+function maybeShowNotice(){
+  try{ if(localStorage.getItem("notice_seen") === _noticeKey()) return; }catch(e){}
+  const t=document.getElementById("notice-title"),
+        mt=document.getElementById("notice-meta"),
+        b=document.getElementById("notice-body"),
+        f=document.getElementById("notice-form");
+  if(t) t.textContent = NOTICE.title;
+  if(mt) mt.textContent = [NOTICE.date, NOTICE.ver ? ("ver "+NOTICE.ver) : ""].filter(Boolean).join("  ·  ");
+  if(b) b.innerHTML = NOTICE.html;
+  if(f){ if(NOTICE.formUrl){ f.href=NOTICE.formUrl; f.style.display="block"; } else { f.style.display="none"; } }
+  document.getElementById("notice-modal").style.display="flex";
+}
+function closeNotice(){ document.getElementById("notice-modal").style.display="none"; }
+function dismissNoticeToday(){
+  try{ localStorage.setItem("notice_seen", _noticeKey()); }catch(e){}
+  closeNotice();
+}
+
 init();
+maybeShowNotice();
 </script>
 </body>
 </html>
