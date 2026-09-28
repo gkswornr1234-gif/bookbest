@@ -13,6 +13,7 @@ data.json 구조:
 import re
 import os
 import json
+from difflib import SequenceMatcher
 import glob
 import datetime
 
@@ -36,7 +37,7 @@ def norm(s):
 
 # 판본 구분자: 같은 제목이라도 한정판/일반판 등은 다른 책(SKU)이므로 키를 분리한다.
 #   norm() 이 괄호를 지워 "…(한정판)" 과 "…" 가 같은 키가 되는 걸 막는다.
-_EDITIONS = ("한정판", "특별판", "리미티드", "양장본", "개정판", "합본", "스페셜")
+_EDITIONS = ("한정판", "특별판", "리미티드", "양장본", "개정판", "합본", "스페셜", "특전판", "특장판")
 
 
 def _edition_tag(title):
@@ -156,6 +157,82 @@ def _rankmap(lst, keyer):
 
 
 # ---------- 한 카테고리 비교 ----------
+def _sim(a, b):
+    if not a or not b:
+        return 0.0
+    return SequenceMatcher(None, a, b).ratio()
+
+
+def _mtitle(t):
+    # 병합 비교용 제목 정규화: 괄호 '문자'만 제거하고 내용은 보존
+    #   (norm 은 괄호 안 내용을 통째로 지워, "(스페셜 에디션)" 과 "스페셜 에디션" 이 달라지는 문제 방지)
+    t = (t or "")
+    for ch in "()[]{}":
+        t = t.replace(ch, " ")
+    return norm(t)
+
+
+def _merge_similar(books):
+    """서점이 겹치지 않는 두 엔트리가 '제목 거의 동일 + 저자 호환 + 판본/권수 동일'이면 합침.
+       겹치는 서점이 없어 순위 충돌이 없으므로 안전. (ISBN 이 아무 서점에도 없는 만화/소설 등에서
+       제목·저자 표기 차이로 갈라진 같은 책을 회수한다.)"""
+    n = len(books)
+    used = [False] * n
+    info = []
+    for b in books:
+        info.append({
+            "t": _mtitle(b.get("title", "")),
+            "a": author_core(b.get("author", "")),
+            "ed": _edition_tag(b.get("title", "")),
+            "vo": _vol_tag(b.get("title", "")),
+            "stores": {s for s in STORES if b.get(s)},
+        })
+    for i in range(n):
+        if used[i]:
+            continue
+        bi, ii = books[i], info[i]
+        for j in range(i + 1, n):
+            if used[j]:
+                continue
+            ij = info[j]
+            if ii["stores"] & ij["stores"]:
+                continue                              # 겹치는 서점 → 다른 책일 수 있음
+            if ii["ed"] != ij["ed"] or ii["vo"] != ij["vo"]:
+                continue                              # 판본/권수 다르면 보존(상/하·한정판)
+            ti, tj = ii["t"], ij["t"]
+            if not ti or not tj:
+                continue
+            if ti == tj:
+                title_ok = True
+            elif len(ti) >= 8 and len(tj) >= 8 and (ti.startswith(tj) or tj.startswith(ti)):
+                title_ok = True                       # 한쪽이 부제만 더 붙음(충분히 긴 제목)
+            elif min(len(ti), len(tj)) >= 6 and _sim(ti, tj) >= 0.90:
+                title_ok = True
+            else:
+                title_ok = False
+            if not title_ok:
+                continue
+            ai, aj = ii["a"], ij["a"]
+            if not ai or not aj:
+                auth_ok = True                        # 저자 정보 없음 → 강한 제목이 근거
+            elif ai == aj or ai in aj or aj in ai:
+                auth_ok = True                        # 포함관계(세네카 ⊆ 루키우스…세네카)
+            elif _sim(ai, aj) >= (0.60 if ti == tj else 0.75):
+                auth_ok = True                        # 철자 변형(카뮈/까뮈) 등
+            else:
+                auth_ok = False
+            if not auth_ok:
+                continue
+            for s in STORES:                          # j 의 서점 데이터를 i 로 병합
+                if books[j].get(s) and not bi.get(s):
+                    bi[s] = books[j][s]
+            if not bi.get("isbn") and books[j].get("isbn"):
+                bi["isbn"] = books[j]["isbn"]
+            used[j] = True
+            ii["stores"] |= ij["stores"]
+    return [b for k, b in enumerate(books) if not used[k]]
+
+
 def build_category(today_lists, prev_lists):
     """today_lists/prev_lists = {store: [items]} (한 카테고리). books 리스트 반환."""
     keyer = make_keyer(_bridge(today_lists))
@@ -197,7 +274,7 @@ def build_category(today_lists, prev_lists):
                     p = prs if (prs not in (0, None)) else None
             entry[s] = {"t": t, "p": p, "ship": it.get("ship", ""), "url": it.get("url", ""), "sp": it.get("salespoint")}
         books.append(entry)
-    return books
+    return _merge_similar(books)
 
 
 # ---------- 스냅샷 ----------
