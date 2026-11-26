@@ -280,6 +280,13 @@
   .notice-form-btn{display:block;text-align:center;margin-top:18px;padding:12px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;font-size:14px;text-decoration:none;transition:filter .12s}
   .notice-form-btn:hover{filter:brightness(0.95)}
   .notice-actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px}
+  .notice-links{list-style:none;margin:12px 0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .notice-links li{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:0;border-top:1px solid var(--line)}
+  .notice-links li:first-child{border-top:none;background:var(--green-bg,rgba(77,172,39,.08))}
+  .notice-links li::before{content:none!important}
+  .notice-links span{flex:0 0 64px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
+  .notice-links a{font-family:'Roboto',sans-serif;font-size:13.5px;font-weight:500;color:var(--blue);word-break:break-all}
+  .notice-sub{font-size:12.5px;color:var(--ink-3)}
   .notice-hide{background:none;border:none;color:var(--ink-3);font-size:13px;cursor:pointer;font-family:inherit;padding:6px 2px}
   .notice-hide:hover{color:var(--ink-2)}
   .notice-close{background:var(--ink);color:#fff;border:none;border-radius:9px;padding:9px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -1078,20 +1085,21 @@ async function init(){
    새 공지를 낼 때: id 값을 바꾸면(오늘 '안 보기' 누른 사람에게도) 다시 뜹니다.
    구글폼을 만들면 formUrl 에 링크만 넣으면 '의견 보내기' 버튼이 활성화됩니다. */
 const NOTICE = {
-  id: "2026-09-08",
-  date: "2026.09.08",
-  ver: "1.0",
-  title: "📢 업데이트 안내",
+  id: "2026-11-26-move",
+  date: "2026.11.26",
+  ver: "",
+  title: "📢 사내 서버 이전 안내",
   html: `
-    <p>3사 베스트셀러 비교 대시보드에 새 기능이 추가됐어요.</p>
-    <ul>
-      <li><b>도서명·저자 검색</b> (상단 검색창)</li>
-      <li><b>도서 클릭 시 서점별 상세페이지 바로가기</b></li>
-      <li><b>판매지수 표시</b> (예스24·알라딘)</li>
+    <p>베스트셀러·북펀딩 대시보드가 <b>사내 서버로 이전</b>되었습니다.<br>
+    이 페이지는 곧 운영이 종료되니, 앞으로는 아래 새 주소에서 이용해 주세요.</p>
+    <ul class="notice-links">
+      <li><span>베스트셀러</span><a href="https://inkmd.kyobobook.co.kr/bookbest/">inkmd.kyobobook.co.kr/bookbest/</a></li>
+      <li><span>북펀딩</span><a href="https://inkmd.kyobobook.co.kr/bookfund/">inkmd.kyobobook.co.kr/bookfund/</a></li>
     </ul>
-    <p>이용하시면서 불편한 점이나 개선 의견이 있으면 아래로 보내주세요. 🙏</p>
+    <p class="notice-sub">※ 새 주소는 사내망에서 접속할 수 있습니다.<br>※ 즐겨찾기와 공유하신 링크도 새 주소로 바꿔주세요.</p>
   `,
-  formUrl: "https://forms.gle/fbV2tzmUwjpZng6fA"   // 구글폼(의견 보내기) 링크
+  formUrl: "https://inkmd.kyobobook.co.kr/bookbest/",
+  formText: "새 주소로 이동 →"
 };
 
 function _todayStr(){
@@ -1108,7 +1116,7 @@ function maybeShowNotice(){
   if(t) t.textContent = NOTICE.title;
   if(mt) mt.textContent = [NOTICE.date, NOTICE.ver ? ("ver "+NOTICE.ver) : ""].filter(Boolean).join("  ·  ");
   if(b) b.innerHTML = NOTICE.html;
-  if(f){ if(NOTICE.formUrl){ f.href=NOTICE.formUrl; f.style.display="block"; } else { f.style.display="none"; } }
+  if(f){ if(NOTICE.formUrl){ f.href=NOTICE.formUrl; if(NOTICE.formText) f.textContent=NOTICE.formText; f.style.display="block"; } else { f.style.display="none"; } }
   document.getElementById("notice-modal").style.display="flex";
 }
 function closeNotice(){ document.getElementById("notice-modal").style.display="none"; }
